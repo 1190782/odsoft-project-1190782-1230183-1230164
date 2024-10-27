@@ -70,6 +70,19 @@ pipeline {
                }
            }
        }
+
+       stage('Publish Site Report') {
+           steps {
+               publishHTML([
+                   reportDir: 'target/site',
+                   reportFiles: 'index.html',
+                   reportName: 'Project Site',
+                   keepAll: true,
+                   allowMissing: false,
+                   alwaysLinkToLastBuild: true
+               ])
+           }
+       }
     }
 
     post {
