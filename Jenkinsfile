@@ -42,6 +42,34 @@ pipeline {
                ])
            }
        }
+
+       stage('Integration Testing') {
+           parallel {
+               stage('Service Testing') {
+                   steps {
+                       script {
+                           bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.bookmanagement.model.*'
+                       }
+                   }
+               }
+
+               stage('Database Testing') {
+                   steps {
+                       script {
+                           bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.lendingmanagement.*'
+                       }
+                   }
+               }
+           }
+       }
+
+       stage('Report Results') {
+           steps {
+               script {
+                   bat 'mvn site'
+               }
+           }
+       }
     }
 
     post {
