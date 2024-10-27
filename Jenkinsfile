@@ -45,18 +45,18 @@ pipeline {
 
        stage('Integration Testing') {
            parallel {
-               stage('Service Testing') {
+               stage('Bookmanagement Testing') {
                    steps {
                        script {
-                           bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.bookmanagement.model.*'
+                           bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.bookmanagement.model.BookTest'
                        }
                    }
                }
 
-               stage('Database Testing') {
+               stage('Readermanagement Testing') {
                    steps {
                        script {
-                           bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.lendingmanagement.*'
+                           bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.readermanagement.model.BirthDateTest'
                        }
                    }
                }
