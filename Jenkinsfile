@@ -20,6 +20,26 @@ pipeline {
                 bat 'mvn test'
             }
         }
+
+       stage('Jacoco Report') {
+           steps {
+               jacoco execPattern: '**/target/jacoco.exec',
+                      classPattern: '**/target/classes',
+                      sourcePattern: '**/src/main/java',
+                      inclusionPattern: '**/*.class'
+           }
+       }
+
+       stage('Publish JaCoCo Report') {
+           steps {
+               publishHTML([
+                   reportDir: 'target/site/jacoco',
+                   reportFiles: 'index.html',
+                   reportName: 'JaCoCo Report',
+                   keepAll: true
+               ])
+           }
+       }
     }
 
     post {
