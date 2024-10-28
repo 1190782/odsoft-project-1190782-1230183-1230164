@@ -83,6 +83,15 @@ pipeline {
                ])
            }
        }
+       stage('Deployment') {
+            stage('Deploy to Local') {
+                steps {
+                    script {
+                        bat 'copy target\\psoft-g1-0.0.1-SNAPSHOT.jar C:\\deploy'
+                    }
+                }
+            }
+       }
     }
 
     post {
