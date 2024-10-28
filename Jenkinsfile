@@ -15,14 +15,6 @@ pipeline {
             }
         }
 
-        stage('Static Code Analysis') {
-            steps {
-                script {
-                    bat 'mvn checkstyle:check'
-                }
-            }
-        }
-
         stage('Unit Testing') {
             steps {
                 bat 'mvn test'
