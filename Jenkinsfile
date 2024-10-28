@@ -15,6 +15,14 @@ pipeline {
             }
         }
 
+        stage('Static Code Analysis') {
+            steps {
+                script {
+                    bat 'mvn checkstyle:check'
+                }
+            }
+        }
+
         stage('Unit Testing') {
             steps {
                 bat 'mvn test'
@@ -83,7 +91,7 @@ pipeline {
                ])
            }
        }
-      
+
        stage('Deploy Local') {
            steps {
                script {
@@ -99,6 +107,7 @@ pipeline {
         }
         success {
             echo 'Pipeline succeeded!'
+            recordIssues tools: [checkStyle(pattern: '**/target/checkstyle-result.xml')]
         }
         failure {
             echo 'Pipeline failed!'
