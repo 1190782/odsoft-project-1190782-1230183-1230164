@@ -33,7 +33,7 @@ pipeline {
         stage('Publish Checkstyle Report') {
             steps {
                 publishHTML([
-                    reportDir: 'target/checkstyle',
+                    reportDir: 'target/site',
                     reportFiles: 'checkstyle-result.xml',
                     reportName: 'Checkstyle Report',
                     keepAll: true,
