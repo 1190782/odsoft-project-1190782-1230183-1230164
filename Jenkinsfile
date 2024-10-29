@@ -6,49 +6,13 @@ pipeline {
     }
 
     stages {
-        stage('Clean') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn clean'
-                    } else {
-                        bat 'mvn clean'
-                    }
-                }
-            }
-        }
-
         stage('Build') {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn compile'
+                        sh 'mvn clean package'
                     } else {
-                        bat 'mvn compile'
-                    }
-                }
-            }
-        }
-
-        stage('Package') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn package -DskipTests'
-                    } else {
-                        bat 'mvn package -DskipTests'
-                    }
-                }
-            }
-        }
-
-        stage('Unit Testing') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn test'
-                    } else {
-                        bat 'mvn test'
+                        bat 'mvn clean package'
                     }
                 }
             }
@@ -76,6 +40,18 @@ pipeline {
                     allowMissing: false,
                     alwaysLinkToLastBuild: true
                 ])
+            }
+        }
+
+        stage('Unit Testing') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn test'
+                    } else {
+                        bat 'mvn test'
+                    }
+                }
             }
         }
 
