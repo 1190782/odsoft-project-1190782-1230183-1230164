@@ -33,14 +33,10 @@ pipeline {
         stage('Checkstyle') {
             steps {
                 script {
-                    try {
-                        if (isUnix()) {
-                            sh 'mvn checkstyle:checkstyle'
-                        } else {
-                            bat 'mvn checkstyle:checkstyle'
-                        }
-                    } catch (Exception e) {
-                        echo 'Checkstyle errors found, but continuing the pipeline...'
+                    if (isUnix()) {
+                        sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false -Dmaven.test.failure.ignore=true'
+                    } else {
+                        bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false -Dmaven.test.failure.ignore=true'
                     }
                 }
             }
