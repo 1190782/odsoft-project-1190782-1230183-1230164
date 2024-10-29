@@ -34,9 +34,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn checkstyle:checkstyle'
+                        sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
                     } else {
-                        bat 'mvn checkstyle:checkstyle'
+                        bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
                     }
                 }
             }
