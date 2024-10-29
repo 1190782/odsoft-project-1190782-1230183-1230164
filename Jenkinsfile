@@ -34,7 +34,7 @@ pipeline {
             steps {
                 publishHTML([
                     reportDir: 'target/site',
-                    reportFiles: 'checkstyle-result.xml',
+                    reportFiles: 'checkstyle.html',
                     reportName: 'Checkstyle Report',
                     keepAll: true,
                     allowMissing: false,
