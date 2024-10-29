@@ -24,6 +24,16 @@
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
 	</properties>
 
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

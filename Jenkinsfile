@@ -30,6 +30,31 @@ pipeline {
             }
         }
 
+        stage('Checkstyle') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn checkstyle:checkstyle'
+                    } else {
+                        bat 'mvn checkstyle:checkstyle'
+                    }
+                }
+            }
+        }
+
+        stage('Publish Checkstyle Report') {
+            steps {
+                publishHTML([
+                    reportDir: 'target/checkstyle',
+                    reportFiles: 'checkstyle-result.xml',
+                    reportName: 'Checkstyle Report',
+                    keepAll: true,
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true
+                ])
+            }
+        }
+
         stage('Jacoco Report') {
             steps {
                 jacoco execPattern: '**/target/jacoco.exec',

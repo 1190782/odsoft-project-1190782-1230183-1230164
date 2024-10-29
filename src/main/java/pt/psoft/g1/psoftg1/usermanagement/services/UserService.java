@@ -142,9 +142,10 @@ public class UserService implements UserDetailsService {
 	}
 
 	public User getAuthenticatedUser(Authentication authentication) {
-		if (authentication == null || !(authentication.getPrincipal() instanceof Jwt jwt)) {
+		if (authentication == null || !(authentication.getPrincipal() instanceof Jwt)) {
 			throw new AccessDeniedException("User is not logged in");
 		}
+		Jwt jwt = (Jwt) authentication.getPrincipal();
 
 		// split is present because jwt is storing the id before the username, separated by a comma
         String loggedUsername = jwt.getClaimAsString("sub").split(",")[1];
