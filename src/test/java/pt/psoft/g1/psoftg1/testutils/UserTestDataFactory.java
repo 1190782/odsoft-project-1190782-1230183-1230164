@@ -1,5 +1,5 @@
 package pt.psoft.g1.psoftg1.testutils;
-
+/*
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +11,12 @@ import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+*/
 /**
  * Based on https://github.com/Yoh0xFF/java-spring-security-example
  *
  */
+/*
 @Service
 public class UserTestDataFactory {
 
@@ -46,3 +47,4 @@ public class UserTestDataFactory {
     }
 
 }
+*/

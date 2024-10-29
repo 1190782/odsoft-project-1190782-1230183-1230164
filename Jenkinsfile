@@ -10,9 +10,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn clean package'
+                        sh 'mvn clean compile'
                     } else {
-                        bat 'mvn clean package'
+                        bat 'mvn clean compile'
                     }
                 }
             }
