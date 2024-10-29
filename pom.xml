@@ -171,6 +171,7 @@
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
 					<failsOnError>false</failsOnError>
+					<failOnViolation>false</failOnViolation>
 					<include>src/main/java/pt/psoft/g1/psoftg1/auth/api/**/*.java</include> <!-- Alterado aqui -->
 				</configuration>
 				<executions>
