@@ -170,8 +170,8 @@
 					<configLocation>checkstyle.xml</configLocation>
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
-					<failsOnError>false</failsOnError>
-					<failOnViolation>false</failOnViolation>
+					<failsOnError>true</failsOnError>
+					<failOnViolation>true</failOnViolation>
 					<include>src/main/java/pt/psoft/g1/psoftg1/auth/api/**/*.java</include> <!-- Alterado aqui -->
 				</configuration>
 				<executions>
