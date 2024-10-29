@@ -6,13 +6,37 @@ pipeline {
     }
 
     stages {
+        stage('Clean') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn clean'
+                    } else {
+                        bat 'mvn clean'
+                    }
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn clean compile'
+                        sh 'mvn compile'
                     } else {
-                        bat 'mvn clean compile'
+                        bat 'mvn compile'
+                    }
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn package -DskipTests'
+                    } else {
+                        bat 'mvn package -DskipTests'
                     }
                 }
             }
