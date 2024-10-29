@@ -5,11 +5,6 @@ pipeline {
         maven 'Maven3'
     }
 
-    environment {
-        DEPLOY_DIR = isUnix() ? '/path/to/deploy' : 'C:\\deploy'
-        ARTIFACT_NAME = 'psoft-g1-0.0.1-SNAPSHOT.jar'
-    }
-
     stages {
         stage('Build') {
             steps {
@@ -113,11 +108,11 @@ pipeline {
         stage('Deploy Local') {
             steps {
                 script {
-                   if (isUnix()) {
-                       sh "cp target/${ARTIFACT_NAME} ${DEPLOY_DIR}"
-                   } else {
-                       bat "copy target\\${ARTIFACT_NAME} ${DEPLOY_DIR}"
-                   }
+                    if (isUnix()) {
+                        sh 'cp target/psoft-g1-0.0.1-SNAPSHOT.jar /path/to/deploy'
+                    } else {
+                        bat 'copy target\\psoft-g1-0.0.1-SNAPSHOT.jar C:\\deploy'
+                    }
                 }
             }
         }
