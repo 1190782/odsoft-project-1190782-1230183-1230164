@@ -26,18 +26,19 @@ pipeline {
         }
 
         stage('Scan') {
-            steps {
-                withSonarQubeEnv('sq-odsoft') {
-                    script {
-                        if (isUnix()) {
-                            sh './mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.login=squ_00ea7dbf2666d9150c96746eb737245b93968a40 -Dsonar.java.binaries=target/classes'
-                        } else {
-                            bat 'mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.login=squ_00ea7dbf2666d9150c96746eb737245b93968a40 -Dsonar.java.binaries=target\\classes'
+                    steps {
+                        withSonarQubeEnv('sq-odsoft') {
+                            script {
+                                if (isUnix()) {
+                                    // Executando a análise com o token em vez de login
+                                    sh './mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.token=squ_00ea7dbf2666d9150c96746eb737245b93968a40 -Dsonar.java.binaries=target/classes'
+                                } else {
+                                    bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.token=squ_00ea7dbf2666d9150c96746eb737245b93968a40 -Dsonar.java.binaries=target\\classes'
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
 
         stage('Checkstyle') {
             steps {
