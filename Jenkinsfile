@@ -15,8 +15,14 @@ pipeline {
 
         stage('Scan') {
                     steps {
-                        withSonarQubeEnv(installationName: 'sq-odsoft') {
-                            sh './mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar'
+                        withSonarQubeEnv('sq-odsoft') {
+                            script {
+                                if (isUnix()) {
+                                    sh './mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar'
+                                } else {
+                                    bat 'mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar'
+                                }
+                            }
                         }
                     }
                 }
