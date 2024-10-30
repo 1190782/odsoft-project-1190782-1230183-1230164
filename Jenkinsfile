@@ -151,24 +151,6 @@ pipeline {
             }
         }
 
-        stage('Publish SonarQube Report') {
-                    steps {
-                        script {
-
-                            sh 'curl -o sonar_report.html "http://your-sonarqube-server/api/report?projectKey=pt.psoft.g1:psoft-g1&format=html"'
-
-                            publishHTML([
-                                reportDir: '.',
-                                reportFiles: 'sonar_report.html',
-                                reportName: 'SonarQube Report',
-                                keepAll: true,
-                                allowMissing: false,
-                                alwaysLinkToLastBuild: true
-                            ])
-                        }
-                    }
-                }
-
         stage('Deploy Local') {
             steps {
                 script {
