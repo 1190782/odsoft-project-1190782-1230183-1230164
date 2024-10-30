@@ -18,9 +18,9 @@ pipeline {
                         withSonarQubeEnv('sq-odsoft') {
                             script {
                                 if (isUnix()) {
-                                    sh './mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar'
+                                    sh './mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.login=squ_00ea7dbf2666d9150c96746eb737245b93968a40'
                                 } else {
-                                    bat 'mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar'
+                                    bat 'mvn clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.login=squ_00ea7dbf2666d9150c96746eb737245b93968a40'
                                 }
                             }
                         }
