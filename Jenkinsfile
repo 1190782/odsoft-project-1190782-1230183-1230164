@@ -63,13 +63,13 @@ pipeline {
             }
         }
 
-        stage('Unit Testing') {
+        stage('Run Tests') {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn test'
+                        sh 'mvn verify'
                     } else {
-                        bat 'mvn test'
+                        bat 'mvn verify'
                     }
                 }
             }
