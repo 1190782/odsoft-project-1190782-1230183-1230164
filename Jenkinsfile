@@ -63,33 +63,17 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-                    parallel {
-                        stage('Run Unit Tests') {
-                            steps {
-                                script {
-                                    if (isUnix()) {
-                                        sh 'mvn test'
-                                    } else {
-                                        bat 'mvn test'
-                                    }
-                                }
-                            }
-                        }
-
-                        stage('Run Integration Tests') {
-                            steps {
-                                script {
-                                    if (isUnix()) {
-                                        sh 'mvn verify -Dskip.unit.tests=true'
-                                    } else {
-                                        bat 'mvn verify -Dskip.unit.tests=true'
-                                    }
-                                }
-                            }
-                        }
+         stage('Run Unit Tests') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn test'
+                    } else {
+                        bat 'mvn test'
                     }
                 }
+            }
+        }
 
         stage('Jacoco Report') {
             steps {
@@ -112,6 +96,18 @@ pipeline {
                 ])
             }
         }
+
+        stage('Integration Tests') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dskip.unit.tests=true'
+                            }
+                        }
+                    }
+                }
 
         /*stage('Integration Testing') {
             parallel {
