@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.unitTests.shared;
+package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.shared;
 
 import org.junit.jupiter.api.Test;
 import pt.psoft.g1.psoftg1.shared.model.Name;

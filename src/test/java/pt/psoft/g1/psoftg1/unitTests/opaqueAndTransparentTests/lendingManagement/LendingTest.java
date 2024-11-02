@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.unitTests.lendingManagement;
+package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.lendingManagement;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

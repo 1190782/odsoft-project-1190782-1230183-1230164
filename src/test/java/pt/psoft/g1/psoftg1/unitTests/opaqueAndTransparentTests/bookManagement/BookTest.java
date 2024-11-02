@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.unitTests.bookManagement;
+package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.bookManagement;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.unitTests.readerManagement;
+package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.readerManagement;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
