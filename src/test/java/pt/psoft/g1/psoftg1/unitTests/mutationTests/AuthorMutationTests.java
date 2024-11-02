@@ -21,9 +21,11 @@ class AuthorMutationTests {
     @Test
     void ensureVersionMismatchThrowsInApplyPatch() {
         UpdateAuthorRequest request = new UpdateAuthorRequest("New Bio", "New Name", null, "newPhotoURI");
-        assertThrows(StaleObjectStateException.class, () -> author.applyPatch(author.getVersion() + 1, request),
+        assertThrows(StaleObjectStateException.class, () -> applyPatchWithNewVersion(request),
                 "Expected StaleObjectStateException when version does not match");
     }
+
+
 
     @Test
     void ensureApplyPatchChangesNameIfNotNull() {
@@ -62,7 +64,8 @@ class AuthorMutationTests {
 
     @Test
     void ensureRemovePhotoThrowsOnVersionMismatch() {
-        assertThrows(ConflictException.class, () -> author.removePhoto(author.getVersion() + 1),
+        long mismatchedVersion = author.getVersion() + 1;
+        assertThrows(ConflictException.class, () -> author.removePhoto(mismatchedVersion),
                 "Expected ConflictException when provided version does not match");
     }
 
@@ -72,5 +75,13 @@ class AuthorMutationTests {
 
         // Assuming there's a way to check if `photo` is cleared or null in `EntityWithPhoto`
         assertNull(author.getPhoto(), "Expected photo to be null after removePhoto");
+    }
+
+    private void applyPatchWithNewVersion(UpdateAuthorRequest request) {
+        author.applyPatch(author.getVersion() + 1, request);
+    }
+
+    private void removePhotoWithNewVersion(long newVersion) {
+        author.removePhoto(newVersion);
     }
 }
