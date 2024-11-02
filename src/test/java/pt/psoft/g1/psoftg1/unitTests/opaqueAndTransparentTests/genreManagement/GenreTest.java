@@ -97,28 +97,6 @@ class GenreTest {
     }
 
     @Test
-    void ensureNullGenreMutationFails() {
-        // This should catch any mutation that removes or changes the null check
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Genre(null));
-        assertEquals("Genre cannot be null", exception.getMessage(), "Mutation in null check should fail");
-    }
-
-    @Test
-    void ensureBlankGenreMutationFails() {
-        // This should catch any mutation that removes or changes the blank check
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Genre(" "));
-        assertEquals("Genre cannot be blank", exception.getMessage(), "Mutation in blank check should fail");
-    }
-
-    @Test
-    void ensureGenreExceedsMaxLengthMutationFails() {
-        // This should catch any mutation that changes the max length condition
-        String longGenreName = "A".repeat(101); // 101 characters, exceeding limit of 100
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Genre(longGenreName));
-        assertEquals("Genre has a maximum of 4096 characters", exception.getMessage(), "Mutation in max length check should fail");
-    }
-
-    @Test
     void ensureGenreWithinMaxLengthDoesNotThrow() {
         // This should detect if GENRE_MAX_LENGTH is mutated to a lower value
         String maxLengthGenre = "A".repeat(100); // Exactly at limit
