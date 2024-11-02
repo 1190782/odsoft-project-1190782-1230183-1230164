@@ -64,16 +64,31 @@ pipeline {
         }
 
          stage('Run Unit Tests') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn test'
-                    } else {
-                        bat 'mvn test'
-                    }
-                }
-            }
-        }
+             parallel {
+                 stage('Mutation Tests') {
+                     steps {
+                         script {
+                             if (isUnix()) {
+                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.*'
+                             } else {
+                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.*'
+                             }
+                         }
+                     }
+                 }
+                 stage('Opaque and Transparent Tests') {
+                     steps {
+                         script {
+                             if (isUnix()) {
+                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.*'
+                             } else {
+                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.*'
+                             }
+                         }
+                     }
+                 }
+             }
+         }
 
         stage('Jacoco Report') {
             steps {
@@ -98,16 +113,16 @@ pipeline {
         }
 
         stage('Integration Tests') {
-                    steps {
-                        script {
-                            if (isUnix()) {
-                                sh 'mvn verify -Dskip.unit.tests=true'
-                            } else {
-                                bat 'mvn verify -Dskip.unit.tests=true'
-                            }
-                        }
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn verify -Dskip.unit.tests=true'
+                    } else {
+                        bat 'mvn verify -Dskip.unit.tests=true'
                     }
                 }
+            }
+        }
 
         /*stage('Integration Testing') {
             parallel {
