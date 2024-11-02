@@ -63,15 +63,27 @@ pipeline {
             }
         }
 
-         stage('Run Unit Tests') {
+        stage('Run Mutation tests') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
+                    } else {
+                        bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
+                    }
+                }
+            }
+        }
+
+         /*stage('Run Unit Tests') {
              parallel {
                  stage('Mutation Tests') {
                      steps {
                          script {
                              if (isUnix()) {
-                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.*'
+                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
                              } else {
-                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.*'
+                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
                              }
                          }
                      }
@@ -80,15 +92,15 @@ pipeline {
                      steps {
                          script {
                              if (isUnix()) {
-                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.*'
+                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.**.*Tests'
                              } else {
-                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.*'
+                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.**.*Tests'
                              }
                          }
                      }
                  }
              }
-         }
+         }*/
 
         stage('Jacoco Report') {
             steps {
