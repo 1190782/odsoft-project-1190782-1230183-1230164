@@ -1,28 +1,33 @@
-package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.genreManagement;
+package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Title;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class GenreTest {
+class TitleTest {
 
-    private Genre genre;
-
-    @BeforeEach
-    void setUp() {
-        genre = null; // Reset genre instance before each test
+    @Test
+    void ensureTitleMustNotBeNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Title(null));
     }
 
     @Test
-    void ensureGenreMustNotBeNull() {
-        assertThrows(IllegalArgumentException.class, () -> new Genre(null));
+    void ensureTitleMustNotBeBlank() {
+        assertThrows(IllegalArgumentException.class, () -> new Title(""));
     }
 
     @Test
-    void ensureGenreMustNotBeBlank() {
-        assertThrows(IllegalArgumentException.class, () -> new Genre(""));
+    void ensureTitleCantStartWithWhitespace() {
+        final var title = new Title(" Some title");
+        assertEquals("Some title", title.toString());
+    }
+
+    @Test
+    void ensureTitleCantEndWithWhitespace() {
+        final var title = new Title("Some title ");
+        assertEquals("Some title", title.toString());
     }
 
 
@@ -30,8 +35,8 @@ class GenreTest {
      * Text from <a href="https://www.lipsum.com/">Lorem Ipsum</a> generator.
      */
     @Test
-    void ensureGenreMustNotBeOversize() {
-        assertThrows(IllegalArgumentException.class, () -> new Genre("\n" +
+    void ensureTitleMustNotBeOversize() {
+        assertThrows(IllegalArgumentException.class, () -> new Title("\n" +
                 "\n" +
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam venenatis semper nisl, eget condimentum felis tempus vitae. Morbi tempus turpis a felis luctus, ut feugiat tortor mattis. Duis gravida nunc sed augue ultricies tempor. Phasellus ultrices in dolor id viverra. Sed vitae odio ut est vestibulum lacinia sed sed neque. Mauris commodo, leo in tincidunt porta, justo mi commodo arcu, non ultricies ipsum dolor a mauris. Pellentesque convallis vulputate nisl, vel commodo felis ornare nec. Aliquam tristique diam dignissim hendrerit auctor. Mauris nec dolor hendrerit, dignissim urna non, pharetra quam. Sed diam est, convallis nec efficitur eu, sollicitudin ac nibh. In orci leo, dapibus ut eleifend et, suscipit sit amet felis. Integer lectus quam, tristique posuere vulputate sed, tristique eget sem.\n" +
                 "\n" +
@@ -51,65 +56,16 @@ class GenreTest {
     }
 
     @Test
-    void ensureGenreIsSet() {
-        final var genre = new Genre("Some genre");
-        assertEquals("Some genre", genre.toString());
+    void ensureTitleIsSet() {
+        final var title = new Title("Some title");
+        assertEquals("Some title", title.toString());
     }
 
     @Test
-    void testValidGenreCreation() {
-        genre = new Genre("Fantasy");
-        assertEquals("Fantasy", genre.toString(), "Expected genre to match input");
-    }
-
-    @Test
-    void testGenreCannotBeNull() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Genre(null));
-        assertEquals("Genre cannot be null", exception.getMessage(), "Expected exception message for null genre");
-    }
-
-    @Test
-    void testGenreCannotBeBlank() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Genre("  "));
-        assertEquals("Genre cannot be blank", exception.getMessage(), "Expected exception message for blank genre");
-    }
-
-    @Test
-    void testGenreCannotExceedMaxLength() {
-        String longGenreName = "A".repeat(101); // Exceeding the max length of 100
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Genre(longGenreName));
-        assertEquals("Genre has a maximum of 4096 characters", exception.getMessage(), "Expected exception for genre over max length");
-    }
-
-    @Test
-    void testGenreBoundaryLength() {
-        // Test a genre name exactly at the limit (100 characters)
-        String maxLengthGenre = "A".repeat(100);
-        genre = new Genre(maxLengthGenre);
-        assertEquals(maxLengthGenre, genre.toString(), "Expected genre to match max length input");
-    }
-
-    @Test
-    void testToStringMatchesGenre() {
-        String genreName = "Science Fiction";
-        genre = new Genre(genreName);
-        assertEquals(genreName, genre.toString(), "toString should return genre name");
-    }
-
-    @Test
-    void ensureGenreWithinMaxLengthDoesNotThrow() {
-        // This should detect if GENRE_MAX_LENGTH is mutated to a lower value
-        String maxLengthGenre = "A".repeat(100); // Exactly at limit
-        Genre genre = assertDoesNotThrow(() -> new Genre(maxLengthGenre), "Expected no exception for genre at max length");
-        assertEquals(maxLengthGenre, genre.toString(), "Genre name should match input when within max length");
-    }
-
-    @Test
-    void ensureGenreAssignmentMutationFails() {
-        // Detects mutations that skip or alter the assignment of genre to this.genre
-        String validGenre = "Mystery";
-        Genre genre = new Genre(validGenre);
-        assertEquals(validGenre, genre.toString(), "Genre should match input after creation");
+    void ensureTitleIsChanged() {
+        final var title = new Title("Some title");
+        title.setTitle("Some other title");
+        assertEquals("Some other title", title.toString());
     }
 
 }

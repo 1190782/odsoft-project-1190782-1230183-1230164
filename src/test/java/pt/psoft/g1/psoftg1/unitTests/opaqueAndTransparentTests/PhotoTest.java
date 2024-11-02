@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.shared;
+package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.authorManagement;
+package pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests;
 
 import org.hibernate.StaleObjectStateException;
 import org.junit.jupiter.api.BeforeEach;
