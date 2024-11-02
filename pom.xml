@@ -196,6 +196,9 @@
 					<includes>
 						<include>**/unitTests/mutationTests/*Test.java</include>
 						<include>**/unitTests/opaqueAndTransparentTests/*Test.java</include>
+						<include>**/integrationTests/controllers/*Test.java</include>
+						<include>**/integrationTests/services/*Test.java</include>
+						<include>**/integrationTests/repository/*Test.java</include>
 					</includes>
 					<failIfNoTests>false</failIfNoTests>
 				</configuration>

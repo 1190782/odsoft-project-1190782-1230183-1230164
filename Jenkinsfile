@@ -112,45 +112,43 @@ pipeline {
             }
         }
 
-        stage('Integration Tests') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn verify -Dskip.unit.tests=true'
-                    } else {
-                        bat 'mvn verify -Dskip.unit.tests=true'
+        stage('Integration Testing') {
+            parallel {
+                stage('Controllers Testing') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.controllers.**.*Test -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.controllers.**.*Test -Dskip.unit.tests=true'
+                            }
+                        }
+                    }
+                }
+                stage('Services Testing') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.services.**.*Test -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.services.**.*Test -Dskip.unit.tests=true'
+                            }
+                        }
+                    }
+                }
+                stage('Repository Testing') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.repository.**.*Test -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.repository.**.*Test -Dskip.unit.tests=true'
+                            }
+                        }
                     }
                 }
             }
         }
-
-        /*stage('Integration Testing') {
-            parallel {
-                stage('Bookmanagement Testing') {
-                    steps {
-                        script {
-                            if (isUnix()) {
-                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.bookmanagement.model.BookTest'
-                            } else {
-                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.bookmanagement.model.BookTest'
-                            }
-                        }
-                    }
-                }
-
-                stage('Readermanagement Testing') {
-                    steps {
-                        script {
-                            if (isUnix()) {
-                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.readermanagement.model.BirthDateTest'
-                            } else {
-                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.readermanagement.model.BirthDateTest'
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
 
         stage('Report Results') {
             steps {
