@@ -64,16 +64,32 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'mvn verify'
-                    } else {
-                        bat 'mvn verify'
+                    parallel {
+                        stage('Run Unit Tests') {
+                            steps {
+                                script {
+                                    if (isUnix()) {
+                                        sh 'mvn test'
+                                    } else {
+                                        bat 'mvn test'
+                                    }
+                                }
+                            }
+                        }
+
+                        stage('Run Integration Tests') {
+                            steps {
+                                script {
+                                    if (isUnix()) {
+                                        sh 'mvn verify -Dskip.unit.tests=true'
+                                    } else {
+                                        bat 'mvn verify -Dskip.unit.tests=true'
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            }
-        }
 
         stage('Jacoco Report') {
             steps {
