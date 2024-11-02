@@ -154,7 +154,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'cp target/psoft-g1-0.0.1-SNAPSHOT.jar /path/to/deploy'
+                        withCredentials([sshUserPrivateKey(credentialsId: 'TOKEN_SSH_ID', keyVariable: 'SSH_KEY')]) {
+                            sh 'scp -o StrictHostKeyChecking=no -i $SSH_KEY target/psoft-g1-0.0.1-SNAPSHOT.jar root@vs1215.dei.isep.ipp.pt:/opt/myapp/psoft-g1/'
+                        }
                     } else {
                         bat 'copy target\\psoft-g1-0.0.1-SNAPSHOT.jar C:\\deploy'
                     }
