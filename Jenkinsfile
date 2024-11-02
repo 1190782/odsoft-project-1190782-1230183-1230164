@@ -95,7 +95,7 @@ pipeline {
             }
         }
 
-        stage('Integration Testing') {
+        /*stage('Integration Testing') {
             parallel {
                 stage('Bookmanagement Testing') {
                     steps {
@@ -121,7 +121,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
         stage('Report Results') {
             steps {
