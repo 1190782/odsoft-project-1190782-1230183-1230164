@@ -30,9 +30,11 @@ pipeline {
                 expression { !isUnix() }  // Run this stage only on Windows
             }
             steps {
-                withSonarQubeEnv('sq-odsoft') {
-                    bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.token=squ_00ea7dbf2666d9150c96746eb737245b93968a40 -Dsonar.java.binaries=target\\classes'
-                }
+               withSonarQubeEnv('sq-odsoft') {
+                   withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
+                       bat "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.java.binaries=target\\classes"
+                   }
+               }
             }
         }
 
