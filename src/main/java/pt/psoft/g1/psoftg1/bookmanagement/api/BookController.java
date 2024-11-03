@@ -73,7 +73,6 @@ public class BookController {
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        //final var savedBook = bookService.save(book);
         final var newBookUri = ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .pathSegment(book.getIsbn())
                 .build().toUri();
