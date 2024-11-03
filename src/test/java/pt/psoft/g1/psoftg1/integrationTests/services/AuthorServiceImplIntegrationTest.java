@@ -18,6 +18,7 @@ import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
@@ -29,6 +30,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 /**
@@ -118,4 +121,59 @@ public class AuthorServiceImplIntegrationTest {
         assertEquals(1, coAuthors.size());
         assertThat(coAuthors.get(0).getName()).isEqualTo("Co-Author");
     }
+
+    @Test
+    void partialUpdate_withValidAuthorAndMatchingVersion_shouldUpdateSuccessfully() {
+        Author author1 = new Author("John", "Original bio", "originalPhotoURI");
+        long version = author1.getVersion();
+        long authorNumber = 2;
+        UpdateAuthorRequest request = new UpdateAuthorRequest();
+        request.setName("New Name");
+        request.setBio("New bio");
+
+        when(authorRepository.findByAuthorNumber(authorNumber)).thenReturn(Optional.of(author1));
+        when(authorRepository.save(any(Author.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Author updatedAuthor = authorService.partialUpdate(authorNumber, request, version);
+
+        assertEquals("New Name", updatedAuthor.getName());
+        assertEquals("New bio", updatedAuthor.getBio());
+
+        verify(authorRepository).save(updatedAuthor);
+    }
+
+    @Test
+    void partialUpdate_InvalidAuthor() {
+        long version = 2L;
+        long authorNumber = 3;
+        UpdateAuthorRequest request = new UpdateAuthorRequest();
+        request.setName("Another New Name");
+        request.setBio("Another new bio");
+
+        assertThrows(NotFoundException.class, () -> {
+            authorService.partialUpdate(authorNumber, request, version);
+        });
+    }
+
+    @Test
+    void partialUpdate_nullPhoto() {
+        Author author1 = new Author("Marie", "Initial bio", null);
+        long version = author1.getVersion();
+        long authorNumber = 4;
+        UpdateAuthorRequest request = new UpdateAuthorRequest();
+        request.setName("Different Name");
+        request.setBio("Different bio");
+        request.setPhotoURI("newPhotoURI");
+        request.setPhoto(null);
+
+        when(authorRepository.findByAuthorNumber(authorNumber)).thenReturn(Optional.of(author1));
+        when(authorRepository.save(any(Author.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Author updatedAuthor = authorService.partialUpdate(authorNumber, request, version);
+
+        assertNull(updatedAuthor.getPhoto());
+
+        verify(authorRepository).save(updatedAuthor);
+    }
+
 }
