@@ -363,15 +363,14 @@ We solve this and more problems and now we can see that the maintainability drop
 
 3. **Pipeline Performance**: The pipeline runtime was optimized by X% throughout the project, reducing build and test parallel execution times.
 
-This was the time without using parallelism (5min 52s)
+This was the time without using parallelism (4min 37s)
 
-![FirstPipelineForm](readMeImages/image7.png)
-
-- Build : (55s)
-- Scan : (37s)
-- CheckStyle : (7s)
-- Run Unit Tests : (1min 5secs)
-- Integration Tests : (1m 13s)
+![FirstPipelineForm](readMeImages/image19.png)
+- Build : (48s)
+- Scan : (29s)
+- CheckStyle : (6s)
+- Run Unit Tests : (38s)
+- Integration Tests : (1m 27s)
 
 First we tried to run the unit and integration tests in parallel, but the files for jacoco were still being used by integration.
 

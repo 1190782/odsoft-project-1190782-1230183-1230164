@@ -87,7 +87,7 @@ pipeline {
             }
         }
 
-         /*stage('Run Unit Tests') {
+         stage('Run Unit Tests') {
              parallel {
                  stage('Mutation Tests') {
                      steps {
@@ -112,31 +112,7 @@ pipeline {
                      }
                  }
              }
-         }*/
-
-        stage('Mutation Tests') {
-                     steps {
-                         script {
-                             if (isUnix()) {
-                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
-                             } else {
-                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
-                             }
-                         }
-                     }
-                 }
-                 
-        stage('Opaque and Transparent Tests') {
-                     steps {
-                         script {
-                             if (isUnix()) {
-                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.**.*Test'
-                             } else {
-                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.**.*Test'
-                             }
-                         }
-                     }
-                 }
+         }
 
         stage('Jacoco Report') {
             steps {
