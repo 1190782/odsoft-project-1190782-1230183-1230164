@@ -5,6 +5,37 @@ This project focuses on automating CI/CD and testing processes for a library man
 
 The main goals include implementing a CI/CD pipeline in Jenkins, covering build, packaging, code analysis, test execution and deployment for local and remote environments. The project also explores advanced testing practices, including unit, integration, acceptance and mutation testing, focusing on code coverage and reporting the results.
 
+## Quality Requirements (ASR)
+
+ASR: It is an acronym for "Architecturally Significant Requirements". A subset of the non-functional quality requirements impinging directly on the architecture and structure of the system. These sets of requirements do not concern specific functionalities but rather essential features that guarantee the system is efficient, maintainable, and scalable over time. With regards to this library management system, ASRs include the following:
+
+### Performance:
+
+It should also be swift and efficient. For example, performance-related ASR ensures that the CI/CD pipeline finishes the whole process, which includes build and test, deployment in less than 5 minutes for quick feedback and a smooth workflow.
+
+### Reliability:
+
+The system should be robust and reliable. One target for reliability is having over 90% code coverage from testing. This reduces the chance of any bug reaching production. Static analysis, such as provided by SonarQube, is used to find and reduce potential problems in code, such as "code smells" and unnecessary complexity.
+
+### Scalability:
+
+The system should be in a position to support an increase in the number of users and data volumes without its current performance falling. It should be easily configurable and flexible enough to handle minor adjustments in view so that it can support additional modules and larger datasets with less extensive rewriting of code.
+
+### Maintainability:
+
+The code structure must support easy maintenance and upgrades. Tools like CheckStyle ensure that the code follows styling standards, enhancing readability and comprehension for other developers. This requirement also covers modularity and the use of coding best practices, allowing the system to be updated with minimal impact on other parts of the codebase.
+
+### Documenting and Validating ASRs
+To ensure the ASRs are met, the system includes reports and metrics in the CI/CD pipeline, with automated checks, such as:
+
+### Test Coverage: Utilizing JaCoCo to generate coverage reports and ensure critical areas of the codebase are adequately tested.
+#### Code Analysis:
+Configuring SonarQube to perform checks for complexity, code duplication, and vulnerabilities, providing ongoing reports on code quality.
+#### Pipeline Performance Metrics:
+Assessing the execution time of different pipeline stages and adjusting them as needed to meet the under-5-minutes requirement.
+
+In conclusion of this section, we can confirm that the system is not very well prepared to be on production since it has a lot of maintainability issues, low code coverage and a lot of problems detected with jacoco and sonarqube as it will be described below.
+
 ## Project Goals
 1. **CI/CD Automation**  
    Configure and integrate Jenkins for a complete pipeline, including:
@@ -331,7 +362,7 @@ These tools combined create a robust and efficient CI/CD pipeline, providing a s
 ## Results and Analysis
 Below is a summary of test results and performance analysis observed during the project:
 
-1. **Test Coverage**: JaCoCo reports indicated satisfactory code coverage, with an increase of 1% due to integration and mutation testing. **Note** that this **is not** the final result because the report is being done at the same time as tests are being developed. The final number is supposed to be much higher.
+1. **Test Coverage**: JaCoCo reports indicated satisfactory code coverage, with an increase to 16% due to integration and unit testing. **Note** that this **is not** the final result because the report is being done at the same time as tests are being developed. The final number is supposed to be much higher.
 
 These two reports were taken when we started the project.
 
@@ -341,9 +372,9 @@ These two reports were taken when we started the project.
 
 We can see that the Code Coverage Line is getting higher while the lines missed are decreasing:
 
-![SecondSJacocoReport](readMeImages/image12.png)
-
-![SecondCodeCoverageGraph](readMeImages/image13.png)
+![SecondSJacocoReport](readMeImages/image20.png)
+![SecondCodeCoverageGraph](readMeImages/image21.png)
+![SecondCodeCoverageGraph](readMeImages/image22.png)
 
 After improving and developing the tests, we can confirm that we improved the Code coverage by looking again at these both graphs.
 
@@ -402,7 +433,11 @@ We run **scan and checkstyle** in parallel to get more performance and also beca
 The final time is 4m 31s. With this we can see that this is the best way we can use the pipeline.
 
 ## Conclusion
-This project provided a comprehensive experience in automating development and testing processes using modern tools like Jenkins and SonarQube. Implementing a robust CI/CD pipeline and automated testing proved essential to ensure the library management system's reliability and scalability.
+This project underscored the value of a better structured CI/CD process in organization of code quality, its efficiency and its reliability for the library management system. With the use of Jenkins, SonarQube, Checkstyle, and JaCoCo, we implemented an automated mechanism that made the processes of code examining and testing as well as code deployment easier.
+
+The ability to conduct tests along with some static analysis concurrently was critical for the purposes of enhancing the execution times of the entire pipeline without compromising on the exhaustive coverage of validation. The use of SonarQube and Checkstyle further ensured best coding practices were adopted, as well as highlighting areas that need updates and improvement during the build process. JaCoCo offered valuable perspective on the level of test coverage achieved and assisted in identifying areas that needed more tests.
+
+Deployment was automated for remote and local (on-site) environments in order to maintain uniformity between developments as well as productions which strengthened the faith taken upon the system’s reliability. Last but not least, this CI/CD pipeline ensured faster turnaround times whilst enhancing system visibility and control, which have set the stage for further advancement and future growth of the system.
 
 ## Contributions
 - 1190782 - José Soares
