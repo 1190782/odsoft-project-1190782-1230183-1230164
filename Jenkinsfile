@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-       stage('Scan & Checkstyle') {
+       /*stage('Scan & Checkstyle') {
            parallel {
                stage('Scan') {
                    when { expression { !isUnix() } }  // Run this stage only on Windows
@@ -49,7 +49,30 @@ pipeline {
                    }
                }
            }
-       }
+       }*/
+
+       stage('Scan') {
+                   when { expression { !isUnix() } }  // Run this stage only on Windows
+                   steps {
+                       withSonarQubeEnv('sq-odsoft') {
+                           withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
+                               bat "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.java.binaries=target\\classes"
+                           }
+                       }
+                   }
+               }
+
+        stage('Checkstyle') {
+                   steps {
+                       script {
+                           if (isUnix()) {
+                               sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                           } else {
+                               bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                           }
+                       }
+                   }
+               }
 
         stage('Publish Checkstyle Report') {
             steps {
@@ -64,7 +87,7 @@ pipeline {
             }
         }
 
-         stage('Run Unit Tests') {
+         /*stage('Run Unit Tests') {
              parallel {
                  stage('Mutation Tests') {
                      steps {
@@ -89,7 +112,31 @@ pipeline {
                      }
                  }
              }
-         }
+         }*/
+
+        stage('Mutation Tests') {
+                     steps {
+                         script {
+                             if (isUnix()) {
+                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
+                             } else {
+                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
+                             }
+                         }
+                     }
+                 }
+                 
+        stage('Opaque and Transparent Tests') {
+                     steps {
+                         script {
+                             if (isUnix()) {
+                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.**.*Test'
+                             } else {
+                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.**.*Test'
+                             }
+                         }
+                     }
+                 }
 
         stage('Jacoco Report') {
             steps {
@@ -113,7 +160,7 @@ pipeline {
             }
         }
 
-        stage('Integration Testing') {
+        /*stage('Integration Testing') {
             parallel {
                 stage('Controllers Testing') {
                     steps {
@@ -149,7 +196,43 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
+
+        stage('Controllers Testing') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.controllers.**.*Test -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.controllers.**.*Test -Dskip.unit.tests=true'
+                            }
+                        }
+                    }
+                }
+
+        stage('Services Testing') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.services.**.*Test -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.services.**.*Test -Dskip.unit.tests=true'
+                            }
+                        }
+                    }
+                }
+
+        stage('Repository Testing') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.repository.**.*Test -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.repository.**.*Test -Dskip.unit.tests=true'
+                            }
+                        }
+                    }
+                }
 
         stage('Report Results') {
             steps {

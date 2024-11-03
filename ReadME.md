@@ -1,9 +1,9 @@
 # ODSOFT Project 2024/2025 - CI/CD and Automated Testing
 
 ## Introduction
-This project focuses on automating CI/CD and testing processes for a library management system. The system offers REST endpoints to manage information on books, genres, authors, readers, and loans. This project phase aims to improve the system's variability, configurability, reliability, and automation.
+This project focuses on automating CI/CD and testing processes for a library management system. The system offers REST endpoints to manage information on books, genres, authors, readers and loans. This project phase aims to improve the system's variability, configurability, reliability and automation.
 
-The main goals include implementing a CI/CD pipeline in Jenkins, covering build, packaging, code analysis, test execution, and deployment for local and remote environments. The project also explores advanced testing practices, including unit, integration, acceptance, and mutation testing, focusing on code coverage and reporting the results.
+The main goals include implementing a CI/CD pipeline in Jenkins, covering build, packaging, code analysis, test execution and deployment for local and remote environments. The project also explores advanced testing practices, including unit, integration, acceptance and mutation testing, focusing on code coverage and reporting the results.
 
 ## Project Goals
 1. **CI/CD Automation**  
@@ -18,7 +18,7 @@ The main goals include implementing a CI/CD pipeline in Jenkins, covering build,
 2. **Automated Testing**
    - **Unit Tests**: Divided into black-box and white-box testing of domain classes.
    - **Mutation Testing**: Checking test effectiveness via mutation testing.
-   - **Integration Tests**: Verifying interactions between controllers, services, and repositories.
+   - **Integration Tests**: Verifying interactions between controllers, services and repositories.
    - **Acceptance Testing**: Validating expected system behavior.
 
 3. **Performance and Documentation**
@@ -27,12 +27,12 @@ The main goals include implementing a CI/CD pipeline in Jenkins, covering build,
 
 ## Project Structure
 - **src/main/java**: Contains the system implementation.
-- **src/test/java**: Contains unit, integration, and mutation tests.
+- **src/test/java**: Contains unit, integration and mutation tests.
 - **Jenkinsfile**: Configuration file for the Jenkins CI/CD pipeline.
 - **Documentation**: File detailing all the team decisions during the project.
 
 ## CI/CD Pipeline
-A pipeline automates the software development process, ensuring code is consistently built, tested, and deployed. It integrates continuous integration (CI) and continuous delivery (CD) practices, reducing manual steps, catching bugs earlier. This leads to faster, more reliable deployments and higher code quality.
+A pipeline automates the software development process, ensuring code is consistently built, tested and deployed. It integrates continuous integration (CI) and continuous delivery (CD) practices, reducing manual steps, catching bugs earlier. This leads to faster, more reliable deployments and higher code quality.
 
 1. **Source Control Management (SCM)**  
    We started by implement the Source Control Management. This stage manages changes to source code over time. It keaps tracking of the code revision. It helps team collaboration by avoiding conflicts through branching and merging.
@@ -315,38 +315,57 @@ A pipeline automates the software development process, ensuring code is consiste
 
 During the pipeline, we had to differ from windows and linux system because the both systems don't use the same terminologies, for example bat (Windows) and sh (Linux) ensuring cross-platform compatibility.
 
-- **Jenkins**: Is a popular open-source automation server used for building, testing, and deploying software projects. It enables continuous integration (CI) and continuous delivery (CD) by automating stages in the development lifecycle. Jenkins uses “pipelines” defined as code (usually in Jenkinsfile), which allows us to automate build, test, analysis, and deployment tasks efficiently.
-- **SonarQube**: Is a code quality analysis tool that evaluates code to identify potential bugs, vulnerabilities, and code smells. It provides a continuous inspection of codebases, giving feedback on quality metrics such as complexity, duplications, and code coverage. By using SonarQube in the pipeline, we can ensure code meets high standards before deployment, helping to minimize potential issues and enforce best practices. SonarQube also integrates with Jenkins, automatically analyzing code each time it is committed and providing detailed reports on areas for improvement.
+- **Jenkins**: Is a popular open-source automation server used for building, testing and deploying software projects. It enables continuous integration (CI) and continuous delivery (CD) by automating stages in the development lifecycle. Jenkins uses “pipelines” defined as code (usually in Jenkinsfile), which allows us to automate build, test, analysis and deployment tasks efficiently.
+- **SonarQube**: Is a code quality analysis tool that evaluates code to identify potential bugs, vulnerabilities and code smells. It provides a continuous inspection of codebases, giving feedback on quality metrics just like complexity, duplications and code coverage. Using SonarQube in the pipeline, we can guarantee code meets high standards before deployment, helping to minimize potential issues and enforce best practices. SonarQube also integrates with Jenkins, automatically analyzing code each time it is committed and providing detailed reports on areas for improvement.
 - **JaCoCo**: (Java Code Coverage) is a tool that measures code coverage by determining which lines of code are tested and which are not. It helps identify gaps in test cases by providing a comprehensive view of test coverage, which is critical for assessing the effectiveness of unit tests. Integrated into our Jenkins pipeline, JaCoCo generates reports each time tests are run, helping us maintain adequate coverage and guiding future test development for improved code reliability.
-- **Postman**:  is a tool for API development and testing that allows developers to manually or automatically test RESTful API endpoints. In our project, we use Postman to verify that the API endpoints perform as expected by sending HTTP requests to endpoints for books, genres, authors, readers, and loans. Postman also allows for the creation of collections of test requests, making it easy to document and automate API testing steps within the CI/CD pipeline.
 
 These tools combined create a robust and efficient CI/CD pipeline, providing a smooth process from code changes to automated deployment and verification, while ensuring high code quality and reliability.
 
 ## Technical Decisions and Justifications
-- **Test Automation**: To optimize the pipeline's runtime and ensure rapid feedback, we configured the tests to run in parallel, categorizing them by type—unit tests and integration tests. By parallelizing these test stages, we reduced overall testing time and enhanced efficiency, enabling quicker identification of issues at different levels of code integration and functionality. This approach minimizes bottlenecks, ensures timely detection of issues, and maximizes resource utilization.
-- **Deployment Environment**: Configured Jenkins to deploy both locally and remotely at ISEP, ensuring flexibility and redundancy.
-- **Coverage and Quality**: By integrating SonarQube for automated static code analysis, we ensured a consistent check on code quality, focusing on maintainability, complexity, duplication, and potential vulnerabilities. This tool provided actionable insights for continuous improvement, allowing us to set and track quality standards with each commit. Additionally, using JaCoCo for coverage tracking offered a clear view of testing effectiveness, helping us to maintain high-quality code and prioritize additional testing where coverage was lacking.
+- **Test Automation**: To optimize the pipeline's runtime and ensure rapid feedback, we configured the tests to run in parallel, categorizing them by unit tests and integration tests. By parallelizing these test stages, we reduced overall testing time and enhanced efficiency, enabling faster identification of issues at different levels of code integration and functionality. This approach minimizes bottlenecks, ensures timely detection of issues and maximizes resource utilization.
+- **Deployment Environment**: Configured Jenkins to deploy both locally and remotely at ISEP Servers, ensuring flexibility and redundancy.
+- **Coverage and Quality**: Integrating SonarQube for automated static code analysis, we ensured a consistent check on code quality, focusing on maintainability, complexity, duplication and potential vulnerabilities. This tool provided actionable insights for continuous improvement, allowing us to set and track quality standards with each commit. Additionally, using JaCoCo for coverage tracking offered a clear view of testing effectiveness, helping us to maintain high-quality code and prioritize additional testing where coverage was lacking.
 
 ## Results and Analysis
 Below is a summary of test results and performance analysis observed during the project:
 
-1. **Test Coverage**: JaCoCo reports indicated satisfactory code coverage, with an increase of X% due to integration and mutation testing.
+1. **Test Coverage**: JaCoCo reports indicated satisfactory code coverage, with an increase of 1% due to integration and mutation testing. **Note** that this **is not** the final result because the report is being done at the same time as tests are being developed. The final number is supposed to be much higher.
 
 These two reports were taken when we started the project.
 
-![ProjectSiteReport](readMeImages/image4.png)
+![JacocoReport](readMeImages/image4.png)
 
-![ProjectSiteReport](readMeImages/image5.png)
+![CodeCoverageGraph](readMeImages/image5.png)
+
+We can see that the Code Coverage Line is getting higher while the lines missed are decreasing:
+
+![SecondSJacocoReport](readMeImages/image12.png)
+
+![SecondCodeCoverageGraph](readMeImages/image13.png)
+
+After improving and developing the tests, we can confirm that we improved the Code coverage by looking again at these both graphs.
 
 2. **Code Quality**: SonarQube analysis highlighted improvements in code complexity and duplication.
 
-![ProjectSiteReport](readMeImages/image6.png)
+![SonarQubeData](readMeImages/image6.png)
+
+For example, if we open the maintainability warnings/erros we can find the following: 
+
+1. ![alt text](readMeImages/image14.png)
+
+2. ![alt text](readMeImages/image15.png)
+
+3. ![alt text](readMeImages/image16.png)
+
+We solve this and more problems and now we can see that the maintainability dropped from 300 to 294 open issues. This confirms that the SonarQube is well prepared to analyze the code and new updates.
+
+![alt text](readMeImages/image17.png)
 
 3. **Pipeline Performance**: The pipeline runtime was optimized by X% throughout the project, reducing build and test parallel execution times.
 
 This was the time without using parallelism (5min 52s)
 
-![ProjectSiteReport](readMeImages/image7.png)
+![FirstPipelineForm](readMeImages/image7.png)
 
 - Build : (55s)
 - Scan : (37s)
@@ -354,9 +373,9 @@ This was the time without using parallelism (5min 52s)
 - Run Unit Tests : (1min 5secs)
 - Integration Tests : (1m 13s)
 
-First we try to run the unit and integration tests in parallel, but the files for jacoco were still being used by integration
+First we tried to run the unit and integration tests in parallel, but the files for jacoco were still being used by integration.
 
-![ProjectSiteReport](readMeImages/image8.png)
+![SecondPipeloneForm](readMeImages/image8.png)
 
 **Run Unit Test in parallel:**
 
@@ -372,9 +391,11 @@ First we try to run the unit and integration tests in parallel, but the files fo
 
 We run **scan and checkstyle** in parallel to get more performance and also because they are compatible with running in parallel.
 
-![ProjectSiteReport](readMeImages/image11.png)
+![ProjectSiteReport](readMeImages/image18.png)
 
-- Scan and Checkstyle : (40s)
+- Scan and Checkstyle : (31s)
+
+The final time is 4m 31s. With this we can see that this is the best way we can use the pipeline.
 
 ## Conclusion
 This project provided a comprehensive experience in automating development and testing processes using modern tools like Jenkins and SonarQube. Implementing a robust CI/CD pipeline and automated testing proved essential to ensure the library management system's reliability and scalability.
