@@ -369,7 +369,7 @@ This was the time without using parallelism (4min 37s)
 - Build : (48s)
 - Scan : (29s)
 - CheckStyle : (6s)
-- Run Unit Tests : (38s)
+- Run Unit Tests : Mutation + Opaque and Transparent (38s)
 - Integration Tests : (1m 27s)
 
 First we tried to run the unit and integration tests in parallel, but the files for jacoco were still being used by integration.
@@ -379,8 +379,9 @@ First we tried to run the unit and integration tests in parallel, but the files 
 **Run Unit Test in parallel:**
 
 ![ProjectSiteReport](readMeImages/image9.png)
+- Run Unit Tests : Mutation + Opaque and Transparent (25s)
 
-- Run Unit Tests : (48s)
+With this we confirm that the Unit Tests are faster in parallel
 
 **Run Integration Tests in parallel:**
 
