@@ -8,12 +8,20 @@ The main goals include implementing a CI/CD pipeline in Jenkins, covering build,
 ## System-as-is
 
 ### Domain Model
-
+![DomainModel](readMeImages/domainModel.png)
 
 
 ### Explanation
+The domain model for this project consists of some entities and their relationships within a library management system.
+The User class serves as authentication to limit the access to the application , while the Librarian class represents library staff responsible for managing books and authors. The Genre class categorizes books, and the Book class contains essential details about the books themselves. The Author class has information about the authors, and the Reader class represents the persons that want to borrow some books.
+Lastly, the Lending class tracks the borrowing of books, managing the lending process to the readers, and the Fine class specifically handles penalties for the ones that don´t return in time the books.
 
+The relationships between these classes illustrate the interactions within the system:
 
+A Librarian can register and update multiple Authors and Books, establishing a one-to-many relationship.
+Books can be linked to multiple Authors and categorized under a single Genre, showcasing a many-to-many relationship with Authors and a one-to-many relationship with Genre.
+Each Lending record is associated with a single Reader and a single Book, while also allowing for the possibility of a fine, creating a comprehensive lending management system.
+Overall, this domain model provides a clear view and understanding of the components and their attributes in the system.
 
 ## Requirements (ASR)
 
@@ -452,6 +460,12 @@ This project underscored the value of a better structured CI/CD process in organ
 The ability to conduct tests along with some static analysis concurrently was critical for the purposes of enhancing the execution times of the entire pipeline without compromising on the exhaustive coverage of validation. The use of SonarQube and Checkstyle further ensured best coding practices were adopted, as well as highlighting areas that need updates and improvement during the build process. JaCoCo offered valuable perspective on the level of test coverage achieved and assisted in identifying areas that needed more tests.
 
 Deployment was automated for remote and local (on-site) environments in order to maintain uniformity between developments as well as productions which strengthened the faith taken upon the system’s reliability. Last but not least, this CI/CD pipeline ensured faster turnaround times whilst enhancing system visibility and control, which have set the stage for further advancement and future growth of the system.
+
+After analysing the results, some improvements for the future have been acknowledged:
+
+- A trigger can be implemented in the pipeline so that it is run when some push is made to an indicated branch and create other pipelines to for example only do build and analysis of the code without doing deploy depending on whether you are doing development of new code and do not want to affect the current version of the system.
+- With the addition of new tests we have seen an increase in maintainability problems, so when new tests are implemented more attention should be paid to this and if possible correct those that have already been created.
+
 
 ## Contributions
 - 1190782 - José Soares
