@@ -313,7 +313,7 @@ A pipeline automates the software development process, ensuring code is consiste
 
 ## Configurations and Tools Used
 
-    During the pipeline, we had to differ from windows and linux system because the both systems don't use the same terminologies, for example bat (Windows) and sh (Linux) ensuring cross-platform compatibility.
+During the pipeline, we had to differ from windows and linux system because the both systems don't use the same terminologies, for example bat (Windows) and sh (Linux) ensuring cross-platform compatibility.
 
 - **Jenkins**: Automation of the CI/CD pipeline.
 - **SonarQube**: Tool for static code analysis.
