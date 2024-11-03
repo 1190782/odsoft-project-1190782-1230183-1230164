@@ -331,8 +331,50 @@ These tools combined create a robust and efficient CI/CD pipeline, providing a s
 Below is a summary of test results and performance analysis observed during the project:
 
 1. **Test Coverage**: JaCoCo reports indicated satisfactory code coverage, with an increase of X% due to integration and mutation testing.
+
+These two reports were taken when we started the project.
+
+![ProjectSiteReport](readMeImages/image4.png)
+
+![ProjectSiteReport](readMeImages/image5.png)
+
 2. **Code Quality**: SonarQube analysis highlighted improvements in code complexity and duplication.
+
+![ProjectSiteReport](readMeImages/image6.png)
+
 3. **Pipeline Performance**: The pipeline runtime was optimized by X% throughout the project, reducing build and test parallel execution times.
+
+This was the time without using parallelism (5min 52s)
+
+![ProjectSiteReport](readMeImages/image7.png)
+
+- Build : (55s)
+- Scan : (37s)
+- CheckStyle : (7s)
+- Run Unit Tests : (1min 5secs)
+- Integration Tests : (1m 13s)
+
+First we try to run the unit and integration tests in parallel, but the files for jacoco were still being used by integration
+
+![ProjectSiteReport](readMeImages/image8.png)
+
+**Run Unit Test in parallel:**
+
+![ProjectSiteReport](readMeImages/image9.png)
+
+- Run Unit Tests : (48s)
+
+**Run Integration Tests in parallel:**
+
+![ProjectSiteReport](readMeImages/image10.png)
+
+- Integration Tests : (1m 23s), but we add some tests after the initial print.
+
+We run **scan and checkstyle** in parallel to get more performance and also because they are compatible with running in parallel.
+
+![ProjectSiteReport](readMeImages/image11.png)
+
+- Scan and Checkstyle : (40s)
 
 ## Conclusion
 This project provided a comprehensive experience in automating development and testing processes using modern tools like Jenkins and SonarQube. Implementing a robust CI/CD pipeline and automated testing proved essential to ensure the library management system's reliability and scalability.
