@@ -315,15 +315,17 @@ A pipeline automates the software development process, ensuring code is consiste
 
 During the pipeline, we had to differ from windows and linux system because the both systems don't use the same terminologies, for example bat (Windows) and sh (Linux) ensuring cross-platform compatibility.
 
-- **Jenkins**: Automation of the CI/CD pipeline.
-- **SonarQube**: Tool for static code analysis.
-- **JaCoCo**: Tool for test coverage.
-- **Postman**: Used for API testing and request verification.
+- **Jenkins**: Is a popular open-source automation server used for building, testing, and deploying software projects. It enables continuous integration (CI) and continuous delivery (CD) by automating stages in the development lifecycle. Jenkins uses “pipelines” defined as code (usually in Jenkinsfile), which allows us to automate build, test, analysis, and deployment tasks efficiently.
+- **SonarQube**: Is a code quality analysis tool that evaluates code to identify potential bugs, vulnerabilities, and code smells. It provides a continuous inspection of codebases, giving feedback on quality metrics such as complexity, duplications, and code coverage. By using SonarQube in the pipeline, we can ensure code meets high standards before deployment, helping to minimize potential issues and enforce best practices. SonarQube also integrates with Jenkins, automatically analyzing code each time it is committed and providing detailed reports on areas for improvement.
+- **JaCoCo**: (Java Code Coverage) is a tool that measures code coverage by determining which lines of code are tested and which are not. It helps identify gaps in test cases by providing a comprehensive view of test coverage, which is critical for assessing the effectiveness of unit tests. Integrated into our Jenkins pipeline, JaCoCo generates reports each time tests are run, helping us maintain adequate coverage and guiding future test development for improved code reliability.
+- **Postman**:  is a tool for API development and testing that allows developers to manually or automatically test RESTful API endpoints. In our project, we use Postman to verify that the API endpoints perform as expected by sending HTTP requests to endpoints for books, genres, authors, readers, and loans. Postman also allows for the creation of collections of test requests, making it easy to document and automate API testing steps within the CI/CD pipeline.
+
+These tools combined create a robust and efficient CI/CD pipeline, providing a smooth process from code changes to automated deployment and verification, while ensuring high code quality and reliability.
 
 ## Technical Decisions and Justifications
-- **Test Automation**: We chose to run tests in parallel to optimize the pipeline's runtime by separating unit and integration tests.
+- **Test Automation**: To optimize the pipeline's runtime and ensure rapid feedback, we configured the tests to run in parallel, categorizing them by type—unit tests and integration tests. By parallelizing these test stages, we reduced overall testing time and enhanced efficiency, enabling quicker identification of issues at different levels of code integration and functionality. This approach minimizes bottlenecks, ensures timely detection of issues, and maximizes resource utilization.
 - **Deployment Environment**: Configured Jenkins to deploy both locally and remotely at ISEP, ensuring flexibility and redundancy.
-- **Coverage and Quality**: Leveraged SonarQube for code quality checks to identify improvement areas.
+- **Coverage and Quality**: By integrating SonarQube for automated static code analysis, we ensured a consistent check on code quality, focusing on maintainability, complexity, duplication, and potential vulnerabilities. This tool provided actionable insights for continuous improvement, allowing us to set and track quality standards with each commit. Additionally, using JaCoCo for coverage tracking offered a clear view of testing effectiveness, helping us to maintain high-quality code and prioritize additional testing where coverage was lacking.
 
 ## Results and Analysis
 Below is a summary of test results and performance analysis observed during the project:
