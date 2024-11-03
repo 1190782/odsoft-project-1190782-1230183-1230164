@@ -5,6 +5,20 @@ This project focuses on automating CI/CD and testing processes for a library man
 
 The main goals include implementing a CI/CD pipeline in Jenkins, covering build, packaging, code analysis, test execution and deployment for local and remote environments. The project also explores advanced testing practices, including unit, integration, acceptance and mutation testing, focusing on code coverage and reporting the results.
 
+## System-as-is
+
+### Domain Model
+
+
+
+### Explanation
+
+
+
+## Requirements (ASR)
+
+
+
 ## Quality Requirements (ASR)
 
 ASR: It is an acronym for "Architecturally Significant Requirements". A subset of the non-functional quality requirements impinging directly on the architecture and structure of the system. These sets of requirements do not concern specific functionalities but rather essential features that guarantee the system is efficient, maintainable, and scalable over time. With regards to this library management system, ASRs include the following:
