@@ -138,15 +138,183 @@ A pipeline automates the software development process, ensuring code is consiste
     ![SonarQubeAndCheckStyle](readMeImages/image2.png)
    
 4. **Test Execution**  
-   - **Unit Testing**: Runs unit tests to validate domain classes.
-   - **Integration Testing**: Verifies interactions between system components.
-   - **Mutation Testing**: Assesses unit tests' robustness.
-   - **Coverage Reports**: Generates code coverage reports using JaCoCo.
+    Testing is one of the most important parts of the pipelines. This stage will guarantee that new introduces features won't break the previous versions and will keep the code functional.
 
-5. **Deployment**  
-   - Automated deployment of the `.jar` artifact to both the local environment and the remote server at ISEP.
+   1. **Unit Testing**: 
+
+        Unit tests focus on validating components of the application individually, mainly domain classes. For this, in the pipeline we configured, in parallel, the run of the mutation, opaque and transparent tests. The reason why we decided to do it in parallel will be discussed in another section of this report.
+
+        Mutation tests assess the effectiveness of the unit tests by introducing small changes to the codebase.
+
+        ```groovy
+        stage('Run Unit Tests') {
+             parallel {
+                 stage('Mutation Tests') {
+                     steps {
+                         script {
+                             if (isUnix()) {
+                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
+                             } else {
+                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.mutationTests.**.*Tests'
+                             }
+                         }
+                     }
+                 }
+                 stage('Opaque and Transparent Tests') {
+                     steps {
+                         script {
+                             if (isUnix()) {
+                                 sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.**.*Test'
+                             } else {
+                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.unitTests.opaqueAndTransparentTests.**.*Test'
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+        ```
+
+        This parallel setup allows to run different unit tests categories concurrently, reducing the pipeline's runtime as will be demonstrated in another section.
+
+    2. **Integration Tests**
+        Integration tests guarant interaction between various component in the system, mainly controllers, services and repositories. The following stage will be reponsible for the integration tests run:
+
+        ```groovy
+        stage('Integration Testing') {
+            parallel {
+                stage('Controllers Testing') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.controllers.**.*Test -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.controllers.**.*Test -Dskip.unit.tests=true'
+                            }
+                        }
+                    }
+                }
+                stage('Services Testing') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.services.**.*Test -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.services.**.*Test -Dskip.unit.tests=true'
+                            }
+                        }
+                    }
+                }
+                stage('Repository Testing') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.repository.**.*Test -Dskip.unit.tests=true'
+                            } else {
+                                bat 'mvn verify -Dtest=pt.psoft.g1.psoftg1.integrationTests.repository.**.*Test -Dskip.unit.tests=true'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ```
+
+        While running integration tests in parallel the pipeline gets optimized, reducing testing time as demonstrated also in another section.
+
+    3. Coverage report
+        Code coverage reports give visually details about the percentage of code tested. For this, we used JaCoCo to generate this report. 
+
+        ```groovy
+        stage('Publish JaCoCo Report') {
+            steps {
+                publishHTML([
+                    reportDir: 'target/site/jacoco',
+                    reportFiles: 'index.html',
+                    reportName: 'JaCoCo Report',
+                    keepAll: true,
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true
+                ])
+            }
+        }
+        ```
+
+        It will generate a index.html file with the full report saving it in the directory _target/site/jacoco_.
+
+5. **Report Results**
+    This section is responsible for generating and publish comprehensive reports that provide insights about code qualit, testing coverage and many other metrics. The main goal is to create a detailed summary about the pipeline execution.
+
+    1. The first part of this stage is the **mvn site** command that will generate a project site that includes various reports, for example unit test summaries, code analysis and documentation generated during the build execution. 
+
+    ```groovy
+    stage('Report Results') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'mvn site'
+                    } else {
+                        bat 'mvn site'
+                    }
+                }
+            }
+        }
+    ```
+
+    2. After the site report generation, we used Jenkins publish html plugin to make these reports available in the left panel. 
+
+    ```groovy
+    stage('Publish Site Report') {
+            steps {
+                publishHTML([
+                    reportDir: 'target/site',
+                    reportFiles: 'index.html',
+                    reportName: 'Project Site',
+                    keepAll: true,
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true
+                ])
+            }
+        }
+    ```
+
+    This will generate the index.html and move it to the _target/site_ directory. 
+
+    ![ProjectSiteReport](readMeImages/image3.png)
+
+6. **Deployment**  
+   The deployment stage guarantees that the latest application built is automatically transfered and made accessible in both local and remote environments.
+
+    
+    ```groovy
+    stage('Deploy Local') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        withCredentials([sshUserPrivateKey(credentialsId: 'TOKEN_SSH_ID', keyVariable: 'SSH_KEY')]) {
+                            sh 'scp -o StrictHostKeyChecking=no -i $SSH_KEY target/psoft-g1-0.0.1-SNAPSHOT.jar root@vs1215.dei.isep.ipp.pt:/opt/myapp/psoft-g1/'
+                        }
+                    } else {
+                        bat 'copy target\\psoft-g1-0.0.1-SNAPSHOT.jar C:\\deploy'
+                    }
+                }
+            }
+        }
+    ```
+    
+   1. Local deployment 
+
+    The .jar file generated in the build stage is copied to a specific directory. In this case it will copy the file to the _C:\\\deploy_ package. 
+
+    2. Remote deployment to ISEP Server
+
+    It will simulate a production environment in the remote server. The unix _scp_ command is used to securely transfer the .jar artifact to the specified remote directory on ISEP's server. 
+    This command inclued an authentication token stored and managed by Jenkins. We had to configure this token as a credential in jenkins. By automating this step, the process is faster and more secure, with no manual intervention needed.
 
 ## Configurations and Tools Used
+
+    During the pipeline, we had to differ from windows and linux system because the both systems don't use the same terminologies, for example bat (Windows) and sh (Linux) ensuring cross-platform compatibility.
+
 - **Jenkins**: Automation of the CI/CD pipeline.
 - **SonarQube**: Tool for static code analysis.
 - **JaCoCo**: Tool for test coverage.
