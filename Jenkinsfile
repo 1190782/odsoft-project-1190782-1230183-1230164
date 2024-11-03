@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-       /*stage('Scan & Checkstyle') {
+       stage('Scan & Checkstyle') {
            parallel {
                stage('Scan') {
                    when { expression { !isUnix() } }  // Run this stage only on Windows
@@ -49,30 +49,7 @@ pipeline {
                    }
                }
            }
-       }*/
-
-       stage('Scan') {
-                   when { expression { !isUnix() } }  // Run this stage only on Windows
-                   steps {
-                       withSonarQubeEnv('sq-odsoft') {
-                           withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_TOKEN')]) {
-                               bat "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.java.binaries=target\\classes"
-                           }
-                       }
-                   }
-               }
-
-        stage('Checkstyle') {
-                   steps {
-                       script {
-                           if (isUnix()) {
-                               sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
-                           } else {
-                               bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
-                           }
-                       }
-                   }
-               }
+       }
 
         stage('Publish Checkstyle Report') {
             steps {
