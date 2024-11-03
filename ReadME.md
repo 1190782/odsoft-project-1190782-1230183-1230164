@@ -23,9 +23,42 @@ Books can be linked to multiple Authors and categorized under a single Genre, sh
 Each Lending record is associated with a single Reader and a single Book, while also allowing for the possibility of a fine, creating a comprehensive lending management system.
 Overall, this domain model provides a clear view and understanding of the components and their attributes in the system.
 
-## Requirements (ASR)
+## Requirements
 
+Functional requirements describe the functionality of the system.
 
+For this application we can find :
+
+Book:
+- I want to register a book.
+- I want to update a book’s data.
+- I want to know the details of a book given its ISBN.
+- I want to search books by genre.
+- I want to return a book. If the return is overdue I’m fined by the library.
+
+Author:
+- I want to register an author.
+- I want to update an author’s data.
+- I want to know an author’s detail given its author number.
+- I want to search authors by name.
+
+Lending :
+- I want to lend a book to a reader.
+- I want to return a book. If the return is overdue I’m fined by the library.
+- I want to know the details of a lending given its lending number
+
+Reader:
+- I want to know an author’s detail given its author number.
+- I want to search authors by name.
+- I want to know the details of a book given its ISBN.
+- I want to search books by genre.
+- I want to register as a reader.
+- I want to update my personal data.
+- I want to know a user’s detail given its reader number.
+- I want to search Readers by name.
+- I want to lend a book to a reader.
+- I want to return a book.
+- I want to know the details of a lending given its lending number.
 
 ## Quality Requirements (ASR)
 
