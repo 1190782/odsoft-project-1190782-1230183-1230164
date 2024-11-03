@@ -387,7 +387,9 @@ With this we confirm that the Unit Tests are faster in parallel
 
 ![ProjectSiteReport](readMeImages/image10.png)
 
-- Integration Tests : (1m 23s), but we add some tests after the initial print.
+- Integration Tests : Controller + Service + Repo (1m 23s)
+
+With this, we confirm that the integration tests are faster in parallel.
 
 We run **scan and checkstyle** in parallel to get more performance and also because they are compatible with running in parallel.
 
