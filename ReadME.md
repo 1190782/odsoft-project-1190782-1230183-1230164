@@ -403,15 +403,7 @@ The final time is 4m 31s. With this we can see that this is the best way we can 
 This project provided a comprehensive experience in automating development and testing processes using modern tools like Jenkins and SonarQube. Implementing a robust CI/CD pipeline and automated testing proved essential to ensure the library management system's reliability and scalability.
 
 ## Contributions
-- Student Name 1 - Primary tasks and responsibilities
-- Student Name 2 - Primary tasks and responsibilities
-- Student Name 3 (optional) - Primary tasks and responsibilities
+- 1190782 - José Soares
+- 1230164 - Alexandre Monteiro
+- 1230183 - Fernando Castro
 
-## References
-- [Jenkins Documentation](https://www.jenkins.io/doc/)
-- [SonarQube Documentation](https://docs.sonarqube.org/)
-- [JaCoCo Documentation](https://www.eclemma.org/jacoco/trunk/doc/)
-
----
-
-**Note**: For more details on the system execution and usage, please refer to the source code and included documentation files.
