@@ -9,9 +9,11 @@ The main goals include implementing a CI/CD pipeline in Jenkins, covering build,
 1. **CI/CD Automation**  
    Configure and integrate Jenkins for a complete pipeline, including:
    - Version control (SCM)
+   - SonarQube and CheckStyle
    - Build and packaging (Build and Package)
-   - Artifact generation
-   - Static code analysis (e.g., SonarQube)
+   - Tests Run
+   - Jacoco
+   - Deploy
 
    In this section we will explain our thinking proccess and what we decided in order the results the team had.
 

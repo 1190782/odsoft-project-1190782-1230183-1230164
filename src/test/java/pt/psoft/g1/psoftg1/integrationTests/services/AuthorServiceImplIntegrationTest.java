@@ -176,4 +176,19 @@ public class AuthorServiceImplIntegrationTest {
         verify(authorRepository).save(updatedAuthor);
     }
 
+    @Test
+    void test_removephoto() {
+        Author author1 = new Author("John", "Original bio content", "originalPhotoURI");
+        long version = author1.getVersion();
+        long authorNumber = 5;
+
+        when(authorRepository.findByAuthorNumber(authorNumber)).thenReturn(Optional.of(author1));
+        when(authorRepository.save(any(Author.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Optional<Author> updatedAuthor = authorService.removeAuthorPhoto(authorNumber, version);
+
+        assertNull(updatedAuthor.get().getPhoto());
+        verify(authorRepository).save(updatedAuthor.get());
+    }
+
 }
