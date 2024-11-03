@@ -25,11 +25,6 @@ public class Title {
 
     public void setTitle(String title) {
 
-/*
-        if (!StringUtilsCustom.startsOrEndsInWhiteSpace(title)) {
-            throw new IllegalArgumentException("Invalid title: " + title);
-        }
-*/
         if(title == null)
             throw new IllegalArgumentException("Title cannot be null");
         if(title.isBlank())
