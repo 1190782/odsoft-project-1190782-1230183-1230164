@@ -4,7 +4,7 @@ pipeline {
     environment {
 
         //MAVEN_HOME = '/opt/homebrew' // (MacOS)
-        MAVEN_HOME = '/usr/share/maven' // (Ubuntu)
+        MAVEN_HOME = '/usr/bin/mvn' // (Ubuntu)
 
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'  // Your Git repository URL
         GIT_BRANCH = 'main'  // Specify the branch to check out
