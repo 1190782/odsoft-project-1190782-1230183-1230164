@@ -27,7 +27,6 @@ pipeline {
             }
         }
 
-
         stage('Check Docker') {
             steps {
                 sh 'docker --version'
@@ -43,11 +42,18 @@ pipeline {
             }
         }
 
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing dependencies...'
+                sh 'mvn dependency:resolve'
+            }
+        }
+
         stage('Clean') {
             steps {
                 dir('project2/lms-bookss') {
                     script {
-                        sh 'mvn clean install -X'
+                        sh 'mvn clean compile'
                     }
                 }
                 
