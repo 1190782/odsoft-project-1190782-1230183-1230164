@@ -18,6 +18,12 @@ pipeline {
 
     stages {
 
+        stage('Setup MAVEN_HOME') {
+            steps {
+                env.PATH = "${env.PATH}:${MAVEN_HOME}"
+            }
+        }
+
         stage('Debug Environment') {
             steps {
                 sh 'env'
@@ -43,9 +49,7 @@ pipeline {
         stage('Clean') {
             steps {
                 script {
-                    sh """
-                        ${MAVEN_HOME}/bin/mvn clean install
-                    """
+                    sh 'mvn clean install'
                 }
             }
         }
