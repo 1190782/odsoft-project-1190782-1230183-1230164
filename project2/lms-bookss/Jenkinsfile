@@ -5,6 +5,8 @@ pipeline {
 
         //MAVEN_HOME = '/opt/homebrew' // (MacOS)
         MAVEN_HOME = '/usr/bin/mvn' // (Ubuntu)
+        // Update PATH to include Maven's bin directory
+        PATH = "${env.PATH}:${MAVEN_HOME}"
 
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'  // Your Git repository URL
         GIT_BRANCH = 'main'  // Specify the branch to check out
@@ -17,13 +19,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Setup MAVEN_HOME') {
-            steps {
-                env.PATH = "${env.PATH}:${MAVEN_HOME}"
-            }
-        }
-
         stage('Debug Environment') {
             steps {
                 sh 'env'
