@@ -22,6 +22,8 @@ pipeline {
         stage('Debug Environment') {
             steps {
                 sh 'env'
+                sh 'java --version'
+                sh 'mvn --version'
             }
         }
 
@@ -45,7 +47,7 @@ pipeline {
             steps {
                 dir('project2/lms-bookss') {
                     script {
-                        sh 'mvn clean install'
+                        sh 'mvn clean install -X'
                     }
                 }
                 
