@@ -43,6 +43,10 @@ pipeline {
 
         stage('Clean') {
             steps {
+                dir('project2\\lms-books') {
+                    // Step to clean the workspace
+                    sh 'mvn clean'
+                }
                 script {
                     sh 'mvn clean install'
                 }
