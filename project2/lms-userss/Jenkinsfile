@@ -55,7 +55,7 @@ pipeline {
 
             }
         }
-        
+
          stage('Checkstyle') {
             steps {
                 dir('project2/lms-userss') {
@@ -64,6 +64,21 @@ pipeline {
                     }
                 }
             }
+         }
+
+         stage('Publish Checkstyle Report') {
+             steps {
+                dir('project2/lms-userss') {
+                     publishHTML([
+                         reportDir: 'target/site',
+                         reportFiles: 'checkstyle.html',
+                         reportName: 'Checkstyle Report',
+                         keepAll: true,
+                         allowMissing: false,
+                         alwaysLinkToLastBuild: true
+                     ])
+                }
+             }
          }
     }
 
