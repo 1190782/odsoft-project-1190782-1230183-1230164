@@ -80,6 +80,16 @@ pipeline {
                 }
              }
          }
+
+         stage('Tests') {
+              steps {
+                  dir('project2/lms-userss') {
+                      script {
+                            sh 'mvn test'
+                      }
+                  }
+              }
+         }
     }
 
     post {
