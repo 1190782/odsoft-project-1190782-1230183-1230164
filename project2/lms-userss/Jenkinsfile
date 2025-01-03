@@ -55,6 +55,16 @@ pipeline {
 
             }
         }
+        
+         stage('Checkstyle') {
+            steps {
+                dir('project2/lms-userss') {
+                    script {
+                        sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                    }
+                }
+            }
+         }
     }
 
     post {
