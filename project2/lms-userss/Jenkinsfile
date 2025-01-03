@@ -23,11 +23,26 @@ pipeline {
             }
         }
 
+        stage('Check Docker') {
+            steps {
+                sh 'docker --version'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: "${GIT_BRANCH}",
                     url: "${GIT_REPO_URL}",
                     credentialsId: "${CREDENTIALS_ID}"
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                dir('project2/lms-bookss') {
+                    echo 'Installing dependencies...'
+                    sh 'mvn dependency:resolve'
+                }
             }
         }
     }
