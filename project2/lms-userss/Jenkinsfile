@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    environment {
+
+        MAVEN_HOME = '/usr/bin/mvn'
+        PATH = "${env.PATH}:${MAVEN_HOME}"
+        GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'
+        GIT_BRANCH = 'main'
+        CREDENTIALS_ID = 'github-jenkins-token'
+        SERVER_PORT = '2226'
+        IMAGE_NAME = 'lmsusers'
+        IMAGE_TAG = 'latest'
+    }
+
+    stages {
+        stage('Debug Environment') {
+            steps {
+                sh 'env'
+                sh 'java --version'
+                sh 'mvn --version'
+                sh 'ls -la'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed. Cleaning workspace...'
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
