@@ -45,8 +45,10 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                echo 'Installing dependencies...'
-                sh 'mvn dependency:resolve'
+                dir('project2/lms-bookss') {
+                    echo 'Installing dependencies...'
+                    sh 'mvn dependency:resolve'
+                }
             }
         }
 
