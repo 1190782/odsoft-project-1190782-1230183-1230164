@@ -56,7 +56,7 @@ pipeline {
             steps {
                 dir('project2/lms-bookss') {
                     sh 'ls -la'
-                    sh 'mvn clean compile'
+                    sh 'mvn clean install'
                 }
                 
             }
