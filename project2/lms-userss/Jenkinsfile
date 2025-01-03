@@ -56,6 +56,17 @@ pipeline {
             }
         }
 
+        stage('Docker Build') {
+            steps {
+                dir('project2/lms-userss') {
+                    script {
+                        echo 'Building Docker image...'
+                        sh 'docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} .'
+                    }
+                }
+            }
+        }
+
          stage('Checkstyle') {
             steps {
                 dir('project2/lms-userss') {
