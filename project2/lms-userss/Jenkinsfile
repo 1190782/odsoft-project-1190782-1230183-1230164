@@ -36,13 +36,23 @@ pipeline {
                     credentialsId: "${CREDENTIALS_ID}"
             }
         }
-        
+
         stage('Install Dependencies') {
             steps {
                 dir('project2/lms-bookss') {
                     echo 'Installing dependencies...'
                     sh 'mvn dependency:resolve'
                 }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('project2/lms-userss') {
+                    sh 'ls -la'
+                    sh 'mvn clean compile'
+                }
+
             }
         }
     }
