@@ -90,6 +90,32 @@ pipeline {
                   }
               }
          }
+
+         stage('Jacoco') {
+             steps {
+                 dir('project2/lms-userss') {
+                     jacoco execPattern: '**/target/jacoco.exec',
+                            classPattern: '**/target/classes',
+                            sourcePattern: '**/src/main/java',
+                            inclusionPattern: '**/*.class'
+                 }
+             }
+         }
+
+         stage('Publish JaCoCo Report') {
+             steps {
+                 dir('project2/lms-userss') {
+                     publishHTML([
+                         reportDir: 'target/site/jacoco',
+                         reportFiles: 'index.html',
+                         reportName: 'JaCoCo Report',
+                         keepAll: true,
+                         allowMissing: false,
+                         alwaysLinkToLastBuild: true
+                     ])
+                 }
+             }
+         }
     }
 
     post {
