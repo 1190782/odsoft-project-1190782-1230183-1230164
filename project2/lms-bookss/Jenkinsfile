@@ -24,6 +24,7 @@ pipeline {
                 sh 'env'
                 sh 'java --version'
                 sh 'mvn --version'
+                sh 'ls -la'
             }
         }
 
@@ -52,9 +53,8 @@ pipeline {
         stage('Clean') {
             steps {
                 dir('project2/lms-bookss') {
-                    script {
-                        sh 'mvn clean compile'
-                    }
+                    sh 'ls -la'
+                    sh 'mvn clean compile'
                 }
                 
             }
