@@ -16,14 +16,16 @@ pipeline {
     stages {
         stage('Debug Environment') {
             steps {
-                bat 'java --version'
-                bat 'mvn --version'
+                sh 'env'
+                sh 'java --version'
+                sh 'mvn --version'
+                sh 'ls -la'
             }
         }
 
         stage('Check Docker') {
             steps {
-                bat 'docker --version'
+                sh 'docker --version'
             }
         }
 
@@ -31,6 +33,7 @@ pipeline {
             steps {
                 git branch: "${GIT_BRANCH}",
                     url: "${GIT_REPO_URL}",
+                    credentialsId: "${CREDENTIALS_ID}"
             }
         }
 
@@ -38,7 +41,7 @@ pipeline {
             steps {
                 dir('project2/lms-bookss') {
                     echo 'Installing dependencies...'
-                    bat 'mvn dependency:resolve'
+                    sh 'mvn dependency:resolve'
                 }
             }
         }
@@ -46,8 +49,8 @@ pipeline {
         stage('Build') {
             steps {
                 dir('project2/lms-userss') {
-                    bat 'ls -la'
-                    bat 'mvn clean compile'
+                    sh 'ls -la'
+                    sh 'mvn clean compile'
                 }
 
             }
@@ -58,7 +61,7 @@ pipeline {
                 dir('project2/lms-userss') {
                     script {
                         echo 'Building Docker image...'
-                        bat 'docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} .'
+                        sh 'docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} .'
                     }
                 }
             }
@@ -68,7 +71,7 @@ pipeline {
             steps {
                 dir('project2/lms-userss') {
                     script {
-                        bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                        sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
                     }
                 }
             }
@@ -93,7 +96,7 @@ pipeline {
               steps {
                   dir('project2/lms-userss') {
                       script {
-                            bat 'mvn test'
+                            sh 'mvn test'
                       }
                   }
               }
