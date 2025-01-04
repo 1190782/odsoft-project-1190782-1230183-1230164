@@ -78,6 +78,7 @@ pipeline {
         stage('Docker Image Push Repository') {
             steps {
                 dir('project2\\lms-bookss') {
+                        bat 'echo $DOCKERHUB_CREDENTIALS_USR'
                         bat 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                         bat 'docker push 1190782/lmsbooks:latest'
                         bat 'docker logout'
