@@ -6,6 +6,9 @@ pipeline {
     }
 
     environment {
+
+        MAVEN_HOME = '\\usr\\bin\\mvn'
+        PATH = "${env.PATH}:${MAVEN_HOME}"
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'
         GIT_BRANCH = 'main'
         SERVER_PORT = '2226'
