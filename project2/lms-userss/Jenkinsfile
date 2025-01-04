@@ -32,7 +32,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: "${GIT_BRANCH}",
-                    url: "${GIT_REPO_URL}",
+                    url: "${GIT_REPO_URL}"
             }
         }
 
