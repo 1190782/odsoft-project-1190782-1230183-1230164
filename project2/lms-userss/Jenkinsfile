@@ -57,7 +57,7 @@ pipeline {
                 dir('project2\\lms-userss') {
                     script {
                         echo 'Building Docker image...'
-                        bat 'docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} .'
+                        bat 'docker build -f DockerfileWithPackaging -t lmsbooks .'
                     }
                 }
             }
