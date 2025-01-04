@@ -117,14 +117,14 @@ pipeline {
                         echo "Instance configuration: book1=${scalingOptions.instancesBook1}"
                         echo "Instance configuration: book2=${scalingOptions.instancesBook2}"
 
-                        bat 'docker-compose -f docker-compose-config.yml down --remove-orphans'
+                        bat 'docker-compose -f docker-compose-test.yml down --remove-orphans'
 
                         if (scalingOptions.actionType == 'Increase Instances') {
                             echo "Launching additional instances..."
-                            bat 'docker-compose -f docker-compose-config.yml up --scale book1=${scalingOptions.instancesBook1} --scale book2=${scalingOptions.instancesBook2} -d'
+                            bat 'docker-compose -f docker-compose-test.yml up --scale book1=${scalingOptions.instancesBook1} --scale book2=${scalingOptions.instancesBook2} -d'
                         } else if (scalingOptions.actionType == 'Decrease Instances') {
                             echo "Reducing instances to minimum..."
-                            bat 'docker-compose -f docker-compose-config.yml up --scale book1=0 --scale book2=0 -d'
+                            bat 'docker-compose -f docker-compose-test.yml up --scale book1=0 --scale book2=0 -d'
                         }
                     }
                 }
