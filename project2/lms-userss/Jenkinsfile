@@ -21,6 +21,8 @@ pipeline {
             steps {
                 bat 'java --version'
                 bat 'mvn --version'
+                bat 'dir'
+                bat 'docker ps'
             }
         }
 
@@ -49,6 +51,7 @@ pipeline {
         stage('Build') {
             steps {
                 dir('project2\\lms-userss') {
+                    bat 'dir'
                     bat 'mvn clean compile'
                 }
 
