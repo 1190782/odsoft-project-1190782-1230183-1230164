@@ -166,7 +166,7 @@ pipeline {
                                             </ul>
 
                                             <!-- Button with inline style for the color -->
-                                            <a style="color: white" href="${BUILD_URL}console" class="cta-button">Proceed to Approval</a>
+                                            <a style="color: white" href="${BUILD_URL}input" class="cta-button">Proceed to Approval</a>
 
                                             <p>If you have any questions or concerns, please contact the team.</p>
 
