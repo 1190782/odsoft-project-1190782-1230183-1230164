@@ -72,19 +72,30 @@ pipeline {
             }
         }
 
-        stage("Send Email for Approval"){
-          steps{
-                script{
+        stage("Send Email for Approval") {
+            steps {
+                script {
                     echo "Sending email"
                     try {
-                        emailext attachLog: true, body: 'The pipeline already run. It is necessary your approval. Please check the pipeline.', subject: 'Pipeline Ready to Approve', to: 'engreq950@gmail.com'
+                        // Send an email notification with instructions for approval
+                        emailext attachLog: true, 
+                                body: """
+                                    The pipeline has completed the build stage and is waiting for your approval to continue. 
+                                    Please go to Jenkins to approve the next steps. 
+                                    After approval, the pipeline will proceed to deploy the application.
+                                    \n\n
+                                    Pipeline URL: ${BUILD_URL}
+                                """, 
+                                subject: 'Pipeline Ready to Approve', 
+                                to: 'engreq950@gmail.com'
                     } finally {
                         echo "Email sent"
+                        // Pause for manual approval
                         input "Do you want to continue?"
                     }
                 }
-          }
-    }
+            }
+        }
 
         stage('Deploy with Docker Compose') {
             steps {
