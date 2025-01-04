@@ -84,7 +84,7 @@ pipeline {
                                     Please go to Jenkins to approve the next steps. 
                                     After approval, the pipeline will proceed to deploy the application.
                                     \n\n
-                                    Pipeline URL: ${BUILD_URL}
+                                    Pipeline URL: ${BUILD_URL}/console
                                 """, 
                                 subject: 'Pipeline Ready to Approve', 
                                 to: 'engreq950@gmail.com'
