@@ -17,7 +17,7 @@ pipeline {
         GIT_BRANCH = 'main'  // Specify the branch to check out
 
         SERVER_PORT = '2226'
-        GITHUB_TOKEN_ID = 'Password_for_Jenkins'
+        GITHUB_TOKEN_ID = 'PASSWORD_JENKINS_SECRET'
         IMAGE_NAME = 'lmsbooks'
         IMAGE_TAG = 'latest'
     }
@@ -78,7 +78,7 @@ pipeline {
             steps {
                 dir('project2\\lms-bookss') {
                     script {
-                        withCredentials([string(credentialsId: GITHUB_TOKEN_ID, variable: 'Password_for_Jenkins')]) {
+                        withCredentials([string(credentialsId: GITHUB_TOKEN_ID, variable: 'PASSWORD_JENKINS_SECRET')]) {
                             bat 'docker push lmsbooks:latest'
                         }
                     }
