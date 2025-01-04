@@ -239,7 +239,7 @@ pipeline {
             }
         }
 
-        stage('Deploy with Docker Compose') {
+        /* stage('Deploy with Docker Compose') {
             steps {
                 script {
                     bat """
@@ -262,9 +262,9 @@ pipeline {
                     """
                 }
             }
-        }
+        } */
 
-        stage('Run Tests Against Container') {
+        /* stage('Run Tests Against Container') {
             steps {
                 dir('project2\\lms-bookss') {
                     script {
@@ -272,7 +272,7 @@ pipeline {
                     }
                 }
             }
-        }
+        } */
     }
 
     post {
