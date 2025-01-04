@@ -165,7 +165,8 @@ pipeline {
                                                 <li>Once you have reviewed the build logs, click the "Proceed" button below to approve.</li>
                                             </ul>
 
-                                            <a href="${BUILD_URL}" class="cta-button">Proceed to Approval</a>
+                                            <!-- Button with inline style for the color -->
+                                            <a style="color: white" href="${BUILD_URL}console" class="cta-button">Proceed to Approval</a>
 
                                             <p>If you have any questions or concerns, please contact the team.</p>
 
@@ -186,6 +187,7 @@ pipeline {
                 }
             }
         }
+
 
 
 
