@@ -68,6 +68,14 @@ pipeline {
             }
         }
 
+        stage('Docker Image Push Repository') {
+            steps {
+                dir('project2\\lms-userss') {
+                    bat 'docker push localhost:8084/${IMAGE_NAME}:${IMAGE_TAG}'
+                }
+            }
+        }
+
          stage('Checkstyle') {
             steps {
                 dir('project2\\lms-userss') {
