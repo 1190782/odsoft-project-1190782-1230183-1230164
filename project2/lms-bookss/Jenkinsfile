@@ -97,31 +97,6 @@ pipeline {
             }
         }
 
-        stage('Checkstyle') {
-            steps {
-                dir('project2\\lms-userss') {
-                    script {
-                        bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
-                    }
-                }
-            }
-        }
-
-        stage('Publish Checkstyle Report') {
-            steps {
-                dir('project2\\lms-userss') {
-                        publishHTML([
-                            reportDir: 'target/site',
-                            reportFiles: 'checkstyle.html',
-                            reportName: 'Checkstyle Report',
-                            keepAll: true,
-                            allowMissing: false,
-                            alwaysLinkToLastBuild: true
-                        ])
-                }
-            }
-        }
-
         stage('Tests') {
                 steps {
                     dir('project2\\lms-userss') {
