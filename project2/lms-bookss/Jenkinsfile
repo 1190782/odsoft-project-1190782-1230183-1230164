@@ -68,7 +68,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('project2\\lms-bookss') {
-                    bat 'docker build -f DockerfileWithPackaging -t lmsbooks .'
+                    bat 'mvn package'
+                    bat 'docker build -t lmsusers:latest .'
                 }
             }
         }
