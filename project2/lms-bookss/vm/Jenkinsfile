@@ -1,19 +1,16 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven3'
-    }
-
     environment {
 
         //MAVEN_HOME = '/opt/homebrew' // (MacOS)
-        MAVEN_HOME = '\\usr\\bin\\mvn' // (Ubuntu)
+        MAVEN_HOME = '/usr/bin/mvn' // (Ubuntu)
         // Update PATH to include Maven's bin directory
         PATH = "${env.PATH}:${MAVEN_HOME}"
 
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'  // Your Git repository URL
         GIT_BRANCH = 'main'  // Specify the branch to check out
+        CREDENTIALS_ID = 'github-jenkins-token'  // Credentials ID for authentication
 
         SERVER_PORT = '2226'
 
@@ -24,17 +21,17 @@ pipeline {
     stages {
         stage('Debug Environment') {
             steps {
-                bat 'env'
-                bat 'java --version'
-                bat 'mvn --version'
-                bat 'ls -la'
-                bat 'docker ps'
+                sh 'env'
+                sh 'java --version'
+                sh 'mvn --version'
+                sh 'ls -la'
+                sh 'docker ps'
             }
         }
 
         stage('Check Docker') {
             steps {
-                bat 'docker --version'
+                sh 'docker --version'
             }
         }
 
@@ -42,24 +39,25 @@ pipeline {
             steps {
                 // Step to clone the Git repository
                 git branch: "${GIT_BRANCH}",
-                    url: "${GIT_REPO_URL}"
+                    url: "${GIT_REPO_URL}",
+                    credentialsId: "${CREDENTIALS_ID}"
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                dir('project2\\lms-bookss') {
+                dir('project2/lms-bookss') {
                     echo 'Installing dependencies...'
-                    bat 'mvn dependency:resolve'
+                    sh 'mvn dependency:resolve'
                 }
             }
         }
 
         stage('Clean') {
             steps {
-                dir('project2\\lms-bookss') {
-                    bat 'ls -la'
-                    bat 'mvn clean compile'
+                dir('project2/lms-bookss') {
+                    sh 'ls -la'
+                    sh 'mvn clean compile'
                 }
                 
             }
@@ -67,8 +65,8 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                dir('project2\\lms-bookss') {
-                    bat 'docker build -f DockerfileWithPackaging -t lmsbooks .'
+                dir('project2/lms-bookss') {
+                    sh 'docker build -f DockerfileWithPackaging -t lmsbooks .'
                 }
             }
         }
@@ -76,7 +74,7 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 script {
-                    bat """
+                    sh """
 
                         if ! docker ps --filter "name=rabbitmq_in_lms_network" --format '{{.Names}}' | grep -q rabbitmq_in_lms_network; then
                           docker compose -f docker-compose-rabbitmq.yml up -d
