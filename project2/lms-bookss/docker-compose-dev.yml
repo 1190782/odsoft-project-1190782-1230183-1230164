@@ -2,7 +2,7 @@
 services:
     book1:
         image: 1190782/lmsbooks:latest
-        container_name: books1_in_lms_network
+        #container_name: books1_in_lms_network
         build:
             context: ..
             dockerfile: Dockerfile
@@ -20,7 +20,7 @@ services:
 
     book2:
         image: 1190782/lmsbooks:latest
-        container_name: books2_in_lms_network
+        #container_name: books2_in_lms_network
         build:
             context: ..
             dockerfile: Dockerfile
