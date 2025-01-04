@@ -56,13 +56,23 @@ pipeline {
             }
         }
 
-        stage('Clean') {
+        stage('Clean & Build') {
             steps {
                 dir('project2\\lms-bookss') {
                     bat 'dir'
                     bat 'mvn clean compile'
                 }
                 
+            }
+        }
+
+        stage('Run Tests Against Container') {
+            steps {
+                dir('project2\\lms-bookss') {
+                    script {
+                        bat 'mvn verify -Dtest.container.url=http://localhost:2226'
+                    }
+                }
             }
         }
 
@@ -78,9 +88,72 @@ pipeline {
         stage('Docker Image Push Repository') {
             steps {
                 dir('project2\\lms-bookss') {
-                        bat 'docker login -u 1190782 -p dckr_pat_78I6z_Ldwkw1VgXleBe7Oa6F3f0'
-                        bat 'docker push 1190782/lmsbooks:latest'
-                        bat 'docker logout'
+                        withCredentials([usernamePassword(credentialsId: '1190782-dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                            bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                            bat "docker push 1190782/lmsbooks:latest"
+                            bat 'docker logout'
+                        }
+                }
+            }
+        }
+
+        stage('Checkstyle') {
+            steps {
+                dir('project2\\lms-userss') {
+                    script {
+                        bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                    }
+                }
+            }
+        }
+
+        stage('Publish Checkstyle Report') {
+            steps {
+                dir('project2\\lms-userss') {
+                        publishHTML([
+                            reportDir: 'target/site',
+                            reportFiles: 'checkstyle.html',
+                            reportName: 'Checkstyle Report',
+                            keepAll: true,
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: true
+                        ])
+                }
+            }
+        }
+
+        stage('Tests') {
+                steps {
+                    dir('project2\\lms-userss') {
+                        script {
+                            bat 'mvn test'
+                        }
+                    }
+                }
+            }
+
+        stage('Jacoco') {
+            steps {
+                dir('project2\\lms-userss') {
+                    jacoco execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java',
+                        inclusionPattern: '**/*.class'
+                }
+            }
+        }
+
+        stage('Publish JaCoCo Report') {
+            steps {
+                dir('project2\\lms-userss') {
+                    publishHTML([
+                        reportDir: 'target/site/jacoco',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Report',
+                        keepAll: true,
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true
+                    ])
                 }
             }
         }
@@ -200,9 +273,6 @@ pipeline {
                 }
             }
         }
-
-
-
 
         stage('Deploy with Docker Compose') {
             steps {
