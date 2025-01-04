@@ -59,10 +59,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 dir('project2\\lms-userss') {
-                    script {
-                        echo 'Building Docker image...'
-                        bat 'docker build -f DockerfileWithPackaging -t lmsusers .'
-                    }
+                    bat 'docker build -f DockerfileWithPackaging -t lmsusers .'
                 }
             }
         }
