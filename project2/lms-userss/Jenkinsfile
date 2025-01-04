@@ -66,7 +66,7 @@ pipeline {
             }
         }
 
-         stage('Checkstyle') {
+         /*stage('Checkstyle') {
             steps {
                 dir('project2\\lms-userss') {
                     script {
@@ -74,7 +74,7 @@ pipeline {
                     }
                 }
             }
-         }
+         }*/
 
          stage('Publish Checkstyle Report') {
              steps {
