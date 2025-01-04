@@ -80,26 +80,86 @@ pipeline {
                         // Send an email notification with instructions for approval
                         emailext attachLog: true,
                                 body: """
-                                    <h2>Pipeline Build Completed</h2>
-                                    <p>The pipeline has successfully completed the build stage and is now awaiting your approval to proceed.</p>
-                                    
-                                    <h3>Next Steps:</h3>
-                                    <ul>
-                                        <li>Review the build results.</li>
-                                        <li>Approve the next steps to proceed with deployment.</li>
-                                    </ul>
-                                    
-                                    <p>After your approval, the pipeline will continue to the deployment stage.</p>
+                                    <html>
+                                        <head>
+                                            <style>
+                                                body {
+                                                    font-family: Arial, sans-serif;
+                                                    background-color: #f4f4f9;
+                                                    margin: 0;
+                                                    padding: 20px;
+                                                }
+                                                h2 {
+                                                    color: #333366;
+                                                    font-size: 24px;
+                                                    margin-bottom: 10px;
+                                                }
+                                                h3 {
+                                                    color: #444444;
+                                                    font-size: 20px;
+                                                    margin-top: 20px;
+                                                }
+                                                p {
+                                                    color: #555555;
+                                                    font-size: 16px;
+                                                    line-height: 1.6;
+                                                }
+                                                ul {
+                                                    margin: 20px 0;
+                                                    padding-left: 20px;
+                                                    list-style-type: disc;
+                                                }
+                                                li {
+                                                    font-size: 16px;
+                                                    color: #555555;
+                                                }
+                                                a {
+                                                    color: #0073e6;
+                                                    text-decoration: none;
+                                                }
+                                                a:hover {
+                                                    text-decoration: underline;
+                                                }
+                                                .cta-button {
+                                                    display: inline-block;
+                                                    padding: 10px 20px;
+                                                    margin-top: 20px;
+                                                    background-color: #0073e6;
+                                                    color: white;
+                                                    font-size: 16px;
+                                                    text-decoration: none;
+                                                    border-radius: 5px;
+                                                }
+                                                .cta-button:hover {
+                                                    background-color: #005bb5;
+                                                }
+                                            </style>
+                                        </head>
+                                        <body>
+                                            <h2>Pipeline Build Completed</h2>
+                                            <p>The pipeline has successfully completed the build stage and is now awaiting your approval to proceed.</p>
+                                            
+                                            <h3>Next Steps:</h3>
+                                            <ul>
+                                                <li>Review the build results.</li>
+                                                <li>Approve the next steps to proceed with deployment.</li>
+                                            </ul>
+                                            
+                                            <p>After your approval, the pipeline will continue to the deployment stage.</p>
 
-                                    <p><strong>Pipeline URL:</strong> <a href="${BUILD_URL}console">${BUILD_URL}console</a></p>
+                                            <p><strong>Pipeline URL:</strong> <a href="${BUILD_URL}console">${BUILD_URL}console</a></p>
 
-                                    <p><strong>Instructions:</strong></p>
-                                    <ul>
-                                        <li>Click the link above to view the build details.</li>
-                                        <li>Once you have reviewed the build logs, click the "Proceed" button below to approve.</li>
-                                    </ul>
+                                            <p><strong>Instructions:</strong></p>
+                                            <ul>
+                                                <li>Click the link above to view the build details.</li>
+                                                <li>Once you have reviewed the build logs, click the "Proceed" button below to approve.</li>
+                                            </ul>
 
-                                    <p>If you have any questions or concerns, please contact the team.</p>
+                                            <a href="${BUILD_URL}" class="cta-button">Proceed to Approval</a>
+
+                                            <p>If you have any questions or concerns, please contact the team.</p>
+                                        </body>
+                                    </html>
                                 """,
                                 subject: 'Pipeline Ready for Approval',
                                 to: 'engreq950@gmail.com'
