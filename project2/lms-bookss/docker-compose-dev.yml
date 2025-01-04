@@ -1,6 +1,6 @@
 
 services:
-    lmsbooks_1:
+    book1:
         image: 1190782/lmsbooks:latest
         container_name: books1_in_lms_network
         build:
@@ -18,7 +18,7 @@ services:
             replicas: 1
             privileged: true
 
-    lmsbooks_2:
+    book2:
         image: 1190782/lmsbooks:latest
         container_name: books2_in_lms_network
         build:
