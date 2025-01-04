@@ -131,6 +131,18 @@ pipeline {
             }
         }
 
+        stage('Deploy Dev') {
+            steps {
+                 dir('project2\\lms-bookss') {
+                    script {
+                        echo "Deploying to Dev environment..."
+                        bat 'docker-compose -f docker-compose-dev.yml down --remove-orphans'
+                        bat 'docker-compose -f docker-compose-dev.yml up -d --force-recreate'
+                    }
+                 }
+            }
+        }
+
         stage('Tests') {
                 steps {
                     dir('project2\\lms-userss') {
