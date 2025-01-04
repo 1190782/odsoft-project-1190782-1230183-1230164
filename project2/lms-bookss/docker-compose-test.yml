@@ -1,13 +1,11 @@
-
 services:
     book1:
         image: 1190782/lmsbooks:latest
-        #container_name: books1_in_lms_network
         build:
             context: ..
             dockerfile: Dockerfile
         ports:
-            - "7021-7027:8080"
+            - "7021-7030:8080"
         environment:
             SPRING_PROFILES_ACTIVE: instance1,bootstrap,test
         networks:
@@ -19,12 +17,11 @@ services:
 
     book2:
         image: 1190782/lmsbooks:latest
-        #container_name: books2_in_lms_network
         build:
             context: ..
             dockerfile: Dockerfile
         ports:
-            - "7027-7033:8080"
+            - "7031-7040:8080"
         environment:
             SPRING_PROFILES_ACTIVE: instance2,bootstrap,test
         networks:
