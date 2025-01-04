@@ -1,13 +1,15 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven3'
+    }
+
     environment {
 
-        MAVEN_HOME = '/usr/bin/mvn'
-        PATH = "${env.PATH}:${MAVEN_HOME}"
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'
         GIT_BRANCH = 'main'
-        CREDENTIALS_ID = 'github-jenkins-token'
+
         SERVER_PORT = '2226'
         IMAGE_NAME = 'lmsusers'
         IMAGE_TAG = 'latest'
