@@ -147,6 +147,122 @@ pipeline {
                  }
              }
          }
+
+         stage("Send Email for Approval") {
+                     steps {
+                         script {
+                             echo "Sending email"
+                             try {
+                                 // Send an HTML email notification with instructions for approval
+                                 emailext attachLog: true,
+                                         body: """
+                                             <html>
+                                                 <head>
+                                                     <style>
+                                                         body {
+                                                             font-family: Arial, sans-serif;
+                                                             background-color: #f4f4f9;
+                                                             margin: 0;
+                                                             padding: 20px;
+                                                         }
+                                                         h2 {
+                                                             color: #333366;
+                                                             font-size: 24px;
+                                                             margin-bottom: 10px;
+                                                         }
+                                                         h3 {
+                                                             color: #444444;
+                                                             font-size: 20px;
+                                                             margin-top: 20px;
+                                                         }
+                                                         p {
+                                                             color: #555555;
+                                                             font-size: 16px;
+                                                             line-height: 1.6;
+                                                         }
+                                                         ul {
+                                                             margin: 20px 0;
+                                                             padding-left: 20px;
+                                                             list-style-type: disc;
+                                                         }
+                                                         li {
+                                                             font-size: 16px;
+                                                             color: #555555;
+                                                         }
+                                                         a {
+                                                             color: rgb(255, 255, 255);
+                                                             text-decoration: none;
+                                                         }
+                                                         a:hover {
+                                                             text-decoration: underline;
+                                                         }
+                                                         .cta-button {
+                                                             display: inline-block;
+                                                             padding: 10px 20px;
+                                                             margin-top: 20px;
+                                                             background: linear-gradient(45deg, #0073e6, #005bb5);
+                                                             color: white;
+                                                             font-size: 16px;
+                                                             text-decoration: none;
+                                                             border-radius: 5px;
+                                                             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                                                         }
+                                                         .cta-button:hover {
+                                                             background: linear-gradient(45deg, #00bfae, #00a68f);
+                                                             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+                                                         }
+                                                         .footer-text {
+                                                             color: white;
+                                                             font-size: 14px;
+                                                             background-color: #333366;
+                                                             padding: 10px;
+                                                             text-align: center;
+                                                             border-radius: 5px;
+                                                         }
+                                                     </style>
+                                                 </head>
+                                                 <body>
+                                                     <h2>Pipeline Build Completed</h2>
+                                                     <p>The pipeline has successfully completed the build stage and is now awaiting your approval to proceed.</p>
+
+                                                     <h3>Next Steps:</h3>
+                                                     <ul>
+                                                         <li>Review the build results.</li>
+                                                         <li>Approve the next steps to proceed with deployment.</li>
+                                                     </ul>
+
+                                                     <p>After your approval, the pipeline will continue to the deployment stage.</p>
+
+                                                     <p><strong>Pipeline URL:</strong> <a style="color: black" href="${BUILD_URL}console">${BUILD_URL}console</a></p>
+
+                                                     <p><strong>Instructions:</strong></p>
+                                                     <ul>
+                                                         <li>Click the link above to view the build details.</li>
+                                                         <li>Once you have reviewed the build logs, click the "Proceed" button below to approve.</li>
+                                                     </ul>
+
+                                                     <!-- Button with inline style for the color -->
+                                                     <a style="color: white" href="${BUILD_URL}input" class="cta-button">Proceed to Approval</a>
+
+                                                     <p>If you have any questions or concerns, please contact the team.</p>
+
+                                                     <div class="footer-text">
+                                                         Thank you for reviewing the pipeline.
+                                                     </div>
+                                                 </body>
+                                             </html>
+                                         """,
+                                         subject: "Pipeline Ready for Approval - ${BUILD_NUMBER}",
+                                         to: 'engreq950@gmail.com',
+                                         mimeType: 'text/html'  // Ensure the email is sent as HTML
+                             } finally {
+                                 echo "Email sent"
+                                 // Pause for manual approval
+                                 input message: "Do you want to continue?", ok: "Approve", parameters: []
+                             }
+                         }
+                     }
+                 }
     }
 
     post {
