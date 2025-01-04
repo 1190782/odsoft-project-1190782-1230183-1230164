@@ -157,7 +157,7 @@ pipeline {
 
                                             <p>After your approval, the pipeline will continue to the deployment stage.</p>
 
-                                            <p><strong>Pipeline URL:</strong> <a href="${BUILD_URL}console">${BUILD_URL}console</a></p>
+                                            <p><strong>Pipeline URL:</strong> <a style="color: white" href="${BUILD_URL}console">${BUILD_URL}console</a></p>
 
                                             <p><strong>Instructions:</strong></p>
                                             <ul>
