@@ -1,15 +1,13 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven3'
-    }
-
     environment {
 
+        MAVEN_HOME = '/usr/bin/mvn'
+        PATH = "${env.PATH}:${MAVEN_HOME}"
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'
         GIT_BRANCH = 'main'
-
+        CREDENTIALS_ID = 'github-jenkins-token'
         SERVER_PORT = '2226'
         IMAGE_NAME = 'lmsusers'
         IMAGE_TAG = 'latest'
@@ -18,21 +16,24 @@ pipeline {
     stages {
         stage('Debug Environment') {
             steps {
-                bat 'java --version'
-                bat 'mvn --version'
+                sh 'env'
+                sh 'java --version'
+                sh 'mvn --version'
+                sh 'ls -la'
             }
         }
 
         stage('Check Docker') {
             steps {
-                bat 'docker --version'
+                sh 'docker --version'
             }
         }
 
         stage('Checkout') {
             steps {
                 git branch: "${GIT_BRANCH}",
-                    url: "${GIT_REPO_URL}"
+                    url: "${GIT_REPO_URL}",
+                    credentialsId: "${CREDENTIALS_ID}"
             }
         }
 
@@ -40,7 +41,7 @@ pipeline {
             steps {
                 dir('project2/lms-bookss') {
                     echo 'Installing dependencies...'
-                    bat 'mvn dependency:resolve'
+                    sh 'mvn dependency:resolve'
                 }
             }
         }
@@ -48,7 +49,8 @@ pipeline {
         stage('Build') {
             steps {
                 dir('project2/lms-userss') {
-                    bat 'mvn clean compile'
+                    sh 'ls -la'
+                    sh 'mvn clean compile'
                 }
 
             }
@@ -59,7 +61,7 @@ pipeline {
                 dir('project2/lms-userss') {
                     script {
                         echo 'Building Docker image...'
-                        bat 'docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} .'
+                        sh 'docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} .'
                     }
                 }
             }
@@ -69,7 +71,7 @@ pipeline {
             steps {
                 dir('project2/lms-userss') {
                     script {
-                        bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                        sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
                     }
                 }
             }
@@ -94,7 +96,7 @@ pipeline {
               steps {
                   dir('project2/lms-userss') {
                       script {
-                            bat 'mvn test'
+                            sh 'mvn test'
                       }
                   }
               }
