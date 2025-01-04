@@ -58,6 +58,16 @@ pipeline {
             }
         }
 
+        stage('Run Tests Against Container') {
+            steps {
+                dir('project2\\lms-userss') {
+                    script {
+                        sh 'mvn verify -Dtest.container.url=http://localhost:${SERVER_PORT}'
+                    }
+                }
+            }
+        }
+
         stage('Docker Build') {
             steps {
                 dir('project2\\lms-userss') {
