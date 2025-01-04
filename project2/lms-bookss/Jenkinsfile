@@ -78,20 +78,35 @@ pipeline {
                     echo "Sending email"
                     try {
                         // Send an email notification with instructions for approval
-                        emailext attachLog: true, 
+                        emailext attachLog: true,
                                 body: """
-                                    The pipeline has completed the build stage and is waiting for your approval to continue. 
-                                    Please go to Jenkins to approve the next steps. 
-                                    After approval, the pipeline will proceed to deploy the application.
-                                    \n\n
-                                    Pipeline URL: ${BUILD_URL}/console
-                                """, 
-                                subject: 'Pipeline Ready to Approve', 
+                                    <h2>Pipeline Build Completed</h2>
+                                    <p>The pipeline has successfully completed the build stage and is now awaiting your approval to proceed.</p>
+                                    
+                                    <h3>Next Steps:</h3>
+                                    <ul>
+                                        <li>Review the build results.</li>
+                                        <li>Approve the next steps to proceed with deployment.</li>
+                                    </ul>
+                                    
+                                    <p>After your approval, the pipeline will continue to the deployment stage.</p>
+
+                                    <p><strong>Pipeline URL:</strong> <a href="${BUILD_URL}console">${BUILD_URL}console</a></p>
+
+                                    <p><strong>Instructions:</strong></p>
+                                    <ul>
+                                        <li>Click the link above to view the build details.</li>
+                                        <li>Once you have reviewed the build logs, click the "Proceed" button below to approve.</li>
+                                    </ul>
+
+                                    <p>If you have any questions or concerns, please contact the team.</p>
+                                """,
+                                subject: 'Pipeline Ready for Approval',
                                 to: 'engreq950@gmail.com'
                     } finally {
                         echo "Email sent"
                         // Pause for manual approval
-                        input "Do you want to continue?"
+                        input message: "Do you want to continue?", ok: "Approve", parameters: []
                     }
                 }
             }
