@@ -70,7 +70,7 @@ pipeline {
         stage('Docker Image Push Repository') {
             steps {
                 dir('project2\\lms-userss') {
-                    bat 'docker push localhost:8084/lmsusers'
+                    bat 'docker push lmsusers'
                 }
             }
         }
