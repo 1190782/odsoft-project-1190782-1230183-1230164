@@ -62,7 +62,7 @@ pipeline {
             steps {
                 dir('project2\\lms-userss') {
                     bat 'mvn package'
-                    bat 'docker build -t lmsusers:latest .'
+                    bat 'docker build -t 1190782/lmsusers:latest .'
                 }
             }
         }
