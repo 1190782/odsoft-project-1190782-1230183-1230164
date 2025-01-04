@@ -20,6 +20,7 @@ pipeline {
         GITHUB_TOKEN_ID = 'PASSWORD_JENKINS_SECRET'
         IMAGE_NAME = 'lmsbooks'
         IMAGE_TAG = 'latest'
+        DOCKER_HUB_CREDENTIALS = credentials('1190782-dockerhub')
     }
 
     stages {
@@ -69,7 +70,7 @@ pipeline {
             steps {
                 dir('project2\\lms-bookss') {
                     bat 'mvn package'
-                    bat 'docker build -t lmsbooks:latest .'
+                    bat 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
                 }
             }
         }
@@ -77,15 +78,9 @@ pipeline {
         stage('Docker Image Push Repository') {
             steps {
                 dir('project2\\lms-bookss') {
-                    script {
-                        withCredentials([string(credentialsId: 'PASSWORD_JENKINS_SECRET', variable: 'DOCKER_TOKEN')]) {
-                            bat """
-                                echo %DOCKER_TOKEN% | docker login --username 1190782 --password-stdin
-                                docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                                docker logout
-                            """
-                        }
-                    }
+                        bat 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                        bat 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+                        bat 'docker logout'
                 }
             }
         }
