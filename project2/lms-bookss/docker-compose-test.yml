@@ -16,7 +16,6 @@ services:
             - "uploaded_files_volume_1:/tmp"
         deploy:
             replicas: 1
-            privileged: true
 
     lmsbooks_2:
         image: 1190782/lmsbooks:latest
@@ -34,7 +33,6 @@ services:
             - "uploaded_files_volume_2:/tmp"
         deploy:
             replicas: 1
-            privileged: true
 
 networks:
     lms_network:
