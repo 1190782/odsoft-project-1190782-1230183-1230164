@@ -267,7 +267,6 @@
 					<consoleOutput>true</consoleOutput>
 					<failsOnError>true</failsOnError>
 					<failOnViolation>true</failOnViolation>
-					<include>src/main/java/pt/psoft/g1/psoftg1/auth/api/**/*.java</include> <!-- Alterado aqui -->
 				</configuration>
 				<executions>
 					<execution>
