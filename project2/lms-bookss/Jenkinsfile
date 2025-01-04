@@ -114,7 +114,7 @@ pipeline {
                                                     color: #555555;
                                                 }
                                                 a {
-                                                    color: #0073e6;
+                                                    color:rgb(255, 255, 255);
                                                     text-decoration: none;
                                                 }
                                                 a:hover {
@@ -131,7 +131,7 @@ pipeline {
                                                     border-radius: 5px;
                                                 }
                                                 .cta-button:hover {
-                                                    background-color: #005bb5;
+                                                    background-color:rgb(0, 181, 166);
                                                 }
                                             </style>
                                         </head>
@@ -161,7 +161,7 @@ pipeline {
                                         </body>
                                     </html>
                                 """,
-                                subject: 'Pipeline Ready for Approval',
+                                subject: "Pipeline Ready for Approval - ${BUILD_NUMBER}",
                                 to: 'engreq950@gmail.com',
                                 mimeType: 'text/html'  // Ensure the email is sent as HTML
                     } finally {
