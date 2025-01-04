@@ -73,6 +73,14 @@ pipeline {
             }
         }
 
+        stage('Docker Image Push Repository') {
+            steps {
+                dir('project2\\lms-bookss') {
+                    bat 'docker push lmsusers:latest'
+                }
+            }
+        }
+
         stage("Send Email for Approval") {
             steps {
                 script {
