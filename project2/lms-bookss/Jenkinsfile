@@ -20,7 +20,7 @@ pipeline {
         GITHUB_TOKEN_ID = 'PASSWORD_JENKINS_SECRET'
         IMAGE_NAME = 'lmsbooks'
         IMAGE_TAG = 'latest'
-        DOCKER_HUB_CREDENTIALS = credentials('1190782-dockerhub')
+        DOCKERHUB_CREDENTIALS = credentials('1190782-dockerhub')
     }
 
     stages {
