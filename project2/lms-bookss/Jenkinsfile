@@ -72,6 +72,20 @@ pipeline {
             }
         }
 
+        stage("Send Email for Approval"){
+          steps{
+                script{
+                    echo "Sending email"
+                    try {
+                        emailext attachLog: true, body: 'The pipeline already run. It is necessary your approval. Please check the pipeline.', subject: 'Pipeline Ready to Approve', to: 'engreq950@gmail.com'
+                    } finally {
+                        echo "Email sent"
+                        input "Do you want to continue?"
+                    }
+                }
+          }
+    }
+
         stage('Deploy with Docker Compose') {
             steps {
                 script {
