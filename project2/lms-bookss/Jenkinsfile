@@ -57,7 +57,7 @@ pipeline {
         stage('Clean') {
             steps {
                 dir('project2\\lms-bookss') {
-                    bat 'ls -la'
+                    bat 'dir'
                     bat 'mvn clean compile'
                 }
                 
