@@ -25,6 +25,7 @@ pipeline {
                 sh 'java --version'
                 sh 'mvn --version'
                 sh 'ls -la'
+                sh 'docker ps'
             }
         }
 
@@ -61,49 +62,11 @@ pipeline {
                 
             }
         }
-/*
-        stage('Validate') {
-            steps {
-                script {
-                    sh "'${MAVEN_HOME}/bin/mvn' validate"
-                }
-            }
-        }
 
-        stage('Compile') {
-            steps {
-                script {
-                    sh "'${MAVEN_HOME}/bin/mvn' compile"
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                script {
-                    // Run tests
-                    withEnv(["PATH+JDK=${JAVA_HOME}/bin"]) {
-                        sh "'${MAVEN_HOME}/bin/mvn' test"
-                    }
-                }
-            }
-        }
-
-        stage('Package') {
-            steps {
-                script {
-                    // Package the application
-                    sh "'${MAVEN_HOME}/bin/mvn' package"
-                }
-            }
-        }
-*/
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh """
-                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                    """
+                dir('project2/lms-bookss') {
+                    sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
                 }
             }
         }
@@ -146,15 +109,5 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
-
-////if containers are to be removed
-//     post {
-//         always {
-//             echo 'Cleaning up...'
-//             sh """
-//                 docker compose -f docker-compose.yml down || true
-//             """
-//         }
-//     }
 
 }
