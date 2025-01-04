@@ -24,7 +24,6 @@ pipeline {
     stages {
         stage('Debug Environment') {
             steps {
-                bat 'env'
                 bat 'java --version'
                 bat 'mvn --version'
                 bat 'ls -la'
