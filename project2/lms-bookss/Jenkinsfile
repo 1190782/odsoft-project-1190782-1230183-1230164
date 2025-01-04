@@ -90,33 +90,33 @@ pipeline {
 
         stage('Adjust Service Scaling') {
             steps {
-                script {
-                    def scalingOptions = input(
-                        message: 'Define the scaling preferences for books:',
-                        parameters: [
-                            choice(
-                                choices: ['Increase Instances', 'Decrease Instances'],
-                                description: 'Select whether to add or reduce books instances.',
-                                name: 'actionType'
-                            ),
-                            string(
-                                defaultValue: '3',
-                                description: 'Target instance count for book1',
-                                name: 'instancesBook1'
-                            ),
-                            string(
-                                defaultValue: '3',
-                                description: 'Target instance count for book2',
-                                name: 'instancesBook2'
-                            )
-                        ]
-                    )
+                dir('project2\\lms-bookss') {
+                    script {
+                        def scalingOptions = input(
+                            message: 'Define the scaling preferences for books:',
+                            parameters: [
+                                choice(
+                                    choices: ['Increase Instances', 'Decrease Instances'],
+                                    description: 'Select whether to add or reduce books instances.',
+                                    name: 'actionType'
+                                ),
+                                string(
+                                    defaultValue: '3',
+                                    description: 'Target instance count for book1',
+                                    name: 'instancesBook1'
+                                ),
+                                string(
+                                    defaultValue: '3',
+                                    description: 'Target instance count for book2',
+                                    name: 'instancesBook2'
+                                )
+                            ]
+                        )
 
-                    echo "Chosen action: ${scalingOptions.actionType}"
-                    echo "Instance configuration: book1=${scalingOptions.instancesBook1}"
-                    echo "Instance configuration: book2=${scalingOptions.instancesBook2}"
+                        echo "Chosen action: ${scalingOptions.actionType}"
+                        echo "Instance configuration: book1=${scalingOptions.instancesBook1}"
+                        echo "Instance configuration: book2=${scalingOptions.instancesBook2}"
 
-                    dir('project2\\lms-bookss') {
                         bat 'docker-compose -f docker-compose-config.yml down --remove-orphans'
 
                         if (scalingOptions.actionType == 'Increase Instances') {
