@@ -78,8 +78,12 @@ pipeline {
             steps {
                 dir('project2\\lms-bookss') {
                     script {
-                        withCredentials([string(credentialsId: GITHUB_TOKEN_ID, variable: 'PASSWORD_JENKINS_SECRET')]) {
-                            bat 'docker push lmsbooks:latest'
+                        withCredentials([string(credentialsId: 'PASSWORD_JENKINS_SECRET', variable: 'DOCKER_TOKEN')]) {
+                            bat """
+                                echo %DOCKER_TOKEN% | docker login --username 1190782 --password-stdin
+                                docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                                docker logout
+                            """
                         }
                     }
                 }
