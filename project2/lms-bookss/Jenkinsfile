@@ -70,7 +70,7 @@ pipeline {
             steps {
                 dir('project2\\lms-bookss') {
                     bat 'mvn package'
-                    bat 'docker build -t lmsbooks:latest .'
+                    bat 'docker build -t 1190782/lmsbooks:latest .'
                 }
             }
         }
@@ -79,7 +79,7 @@ pipeline {
             steps {
                 dir('project2\\lms-bookss') {
                         bat 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                        bat 'docker push lmsbooks:latest'
+                        bat 'docker push 1190782/lmsbooks:latest'
                         bat 'docker logout'
                 }
             }
