@@ -7,7 +7,6 @@ pipeline {
     }
 
     environment {
-
         MAVEN_HOME = '\\usr\\bin\\mvn'
         PATH = "${env.PATH}:${MAVEN_HOME}"
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'
@@ -63,7 +62,7 @@ pipeline {
             steps {
                 dir('project2\\lms-userss') {
                     bat 'mvn package'
-                    bat 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                    bat 'docker build -t ${IMAGE_NAME}:latest .'
                 }
             }
         }
