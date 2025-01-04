@@ -70,7 +70,9 @@ pipeline {
         stage('Docker Image Push Repository') {
             steps {
                 dir('project2\\lms-userss') {
-                    bat 'docker push lmsusers:latest'
+                    bat 'docker login -u 1190782 -p dckr_pat_78I6z_Ldwkw1VgXleBe7Oa6F3f0'
+                    bat 'docker push 1190782/lmsusers:latest'
+                    bat 'docker logout'
                 }
             }
         }
