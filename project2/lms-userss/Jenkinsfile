@@ -63,7 +63,7 @@ pipeline {
             steps {
                 dir('project2\\lms-userss') {
                     bat 'mvn package'
-                    bat 'docker build -t lmsusers .'
+                    bat 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
                 }
             }
         }
