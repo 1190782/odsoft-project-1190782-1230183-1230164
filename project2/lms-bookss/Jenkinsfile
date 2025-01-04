@@ -66,7 +66,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('project2/lms-bookss') {
-                    sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                    sh 'docker build -f DockerfileWithPackaging -t lmsbooks .'
                 }
             }
         }
