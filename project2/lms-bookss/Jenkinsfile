@@ -21,6 +21,7 @@ pipeline {
         IMAGE_NAME = 'lmsbooks'
         IMAGE_TAG = 'latest'
         DOCKERHUB_CREDENTIALS = credentials('1190782-dockerhub')
+        ENVIRONMENT = 'dev'
     }
 
     stages {
@@ -86,7 +87,50 @@ pipeline {
                 }
             }
         }
-        
+
+        stage('Adjust Service Scaling') {
+            steps {
+                script {
+                    def scalingOptions = input(
+                        message: 'Define the scaling preferences for books:',
+                        parameters: [
+                            choice(
+                                choices: ['Increase Instances', 'Decrease Instances'],
+                                description: 'Select whether to add or reduce books instances.',
+                                name: 'actionType'
+                            ),
+                            string(
+                                defaultValue: '3',
+                                description: 'Target instance count for book1',
+                                name: 'instancesBook1'
+                            ),
+                            string(
+                                defaultValue: '3',
+                                description: 'Target instance count for book2',
+                                name: 'instancesBook2'
+                            )
+                        ]
+                    )
+
+                    echo "Chosen action: ${scalingOptions.actionType}"
+                    echo "Instance configuration: book1=${scalingOptions.instancesBook1}"
+                    echo "Instance configuration: book2=${scalingOptions.instancesBook2}"
+
+                    dir('project2\\lms-bookss') {
+                        bat 'docker-compose -f docker-compose-config.yml down --remove-orphans'
+
+                        if (scalingOptions.actionType == 'Increase Instances') {
+                            echo "Launching additional instances..."
+                            bat 'docker-compose -f docker-compose-config.yml up --scale book1=${scalingOptions.instancesBook1} --scale book2=${scalingOptions.instancesBook2} -d'
+                        } else if (scalingOptions.actionType == 'Decrease Instances') {
+                            echo "Reducing instances to minimum..."
+                            bat 'docker-compose -f docker-compose-config.yml up --scale book1=0 --scale book2=0 -d'
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Tests') {
                 steps {
                     dir('project2\\lms-userss') {
