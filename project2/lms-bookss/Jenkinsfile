@@ -102,29 +102,29 @@ pipeline {
                                 ),
                                 string(
                                     defaultValue: '3',
-                                    description: 'Target instance count for book1',
+                                    description: 'Target instance count for lmsbooks_1',
                                     name: 'instancesBook1'
                                 ),
                                 string(
                                     defaultValue: '3',
-                                    description: 'Target instance count for book2',
+                                    description: 'Target instance count for lmsbooks_2',
                                     name: 'instancesBook2'
                                 )
                             ]
                         )
 
                         echo "Chosen action: ${scalingOptions.actionType}"
-                        echo "Instance configuration: book1=${scalingOptions.instancesBook1}"
-                        echo "Instance configuration: book2=${scalingOptions.instancesBook2}"
+                        echo "Instance configuration: lmsbooks_1=${scalingOptions.instancesBook1}"
+                        echo "Instance configuration: lmsbooks_2=${scalingOptions.instancesBook2}"
 
                         bat 'docker-compose -f docker-compose-test.yml down --remove-orphans'
 
                         if (scalingOptions.actionType == 'Increase Instances') {
                             echo "Launching additional instances..."
-                            bat "docker-compose -f docker-compose-test.yml up --scale book1=${scalingOptions.instancesBook1} --scale book2=${scalingOptions.instancesBook2} -d"
+                            bat "docker-compose -f docker-compose-test.yml up --scale lmsbooks_1=${scalingOptions.instancesBook1} --scale lmsbooks_2=${scalingOptions.instancesBook2} -d"
                         } else if (scalingOptions.actionType == 'Decrease Instances') {
                             echo "Reducing instances to minimum..."
-                            bat 'docker-compose -f docker-compose-test.yml up --scale book1=0 --scale book2=0 -d'
+                            bat 'docker-compose -f docker-compose-test.yml up --scale lmsbooks_1=0 --scale lmsbooks_2=0 -d'
                         }
                     }
                 }
