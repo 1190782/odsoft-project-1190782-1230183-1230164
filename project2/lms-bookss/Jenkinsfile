@@ -66,16 +66,6 @@ pipeline {
             }
         }
 
-        stage('Run Tests Against Container') {
-            steps {
-                dir('project2\\lms-bookss') {
-                    script {
-                        bat 'mvn verify -Dtest.container.url=http://localhost:2226'
-                    }
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 dir('project2\\lms-bookss') {
@@ -96,7 +86,7 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Tests') {
                 steps {
                     dir('project2\\lms-userss') {
@@ -270,6 +260,16 @@ pipeline {
                         docker compose -f docker-compose.yml up -d --force-recreate
 
                     """
+                }
+            }
+        }
+
+        stage('Run Tests Against Container') {
+            steps {
+                dir('project2\\lms-bookss') {
+                    script {
+                        bat 'mvn verify -Dtest.container.url=http://localhost:2226'
+                    }
                 }
             }
         }
