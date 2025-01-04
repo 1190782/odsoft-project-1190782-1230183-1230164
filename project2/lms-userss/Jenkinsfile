@@ -60,7 +60,7 @@ pipeline {
                 dir('project2\\lms-userss') {
                     script {
                         echo 'Building Docker image...'
-                        bat 'docker build -f DockerfileWithPackaging -t lmsbooks .'
+                        bat 'docker build -f DockerfileWithPackaging -t lmsusers .'
                     }
                 }
             }
