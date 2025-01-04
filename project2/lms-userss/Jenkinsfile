@@ -61,12 +61,13 @@ pipeline {
         stage('Docker Build') {
             steps {
                 dir('project2\\lms-userss') {
-                    bat 'docker build -f DockerfileWithPackaging -t lmsusers .'
+                    bat 'mvn package'
+                    bat 'docker build -t lmsusers .'
                 }
             }
         }
 
-         /*stage('Checkstyle') {
+         stage('Checkstyle') {
             steps {
                 dir('project2\\lms-userss') {
                     script {
@@ -74,7 +75,7 @@ pipeline {
                     }
                 }
             }
-         }*/
+         }
 
          stage('Publish Checkstyle Report') {
              steps {
