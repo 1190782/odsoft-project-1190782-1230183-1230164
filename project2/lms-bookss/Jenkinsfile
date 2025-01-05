@@ -88,49 +88,6 @@ pipeline {
             }
         }
 
-        stage('Adjust Service Scaling') {
-            steps {
-                dir('project2\\lms-bookss') {
-                    script {
-                        def scalingOptions = input(
-                            message: 'Define the scaling preferences for books:',
-                            parameters: [
-                                choice(
-                                    choices: ['Increase Instances', 'Decrease Instances'],
-                                    description: 'Select whether to add or reduce books instances.',
-                                    name: 'actionType'
-                                ),
-                                string(
-                                    defaultValue: '3',
-                                    description: 'Target instance count for book1',
-                                    name: 'instancesBook1'
-                                ),
-                                string(
-                                    defaultValue: '3',
-                                    description: 'Target instance count for book2',
-                                    name: 'instancesBook2'
-                                )
-                            ]
-                        )
-
-                        echo "Chosen action: ${scalingOptions.actionType}"
-                        echo "Instance configuration: book1=${scalingOptions.instancesBook1}"
-                        echo "Instance configuration: book2=${scalingOptions.instancesBook2}"
-
-                        bat 'docker-compose -f docker-compose-test.yml down --remove-orphans'
-
-                        if (scalingOptions.actionType == 'Increase Instances') {
-                            echo "Launching additional instances..."
-                            bat "docker-compose -f docker-compose-test.yml up --scale book1=${scalingOptions.instancesBook1} --scale book2=${scalingOptions.instancesBook2} -d"
-                        } else if (scalingOptions.actionType == 'Decrease Instances') {
-                            echo "Reducing instances to minimum..."
-                            bat 'docker-compose -f docker-compose-test.yml up --scale book1=0 --scale book2=0 -d'
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Deploy Dev') {
             steps {
                  dir('project2\\lms-bookss') {
@@ -143,23 +100,61 @@ pipeline {
             }
         }
 
+        stage('Adjust Service Scaling') {
+            steps {
+                dir('project2\\lms-bookss') {
+                    script {
+                        def scalingOptions = input(
+                            message: 'Define the scaling preferences for books:',
+                            parameters: [
+                                choice(
+                                    choices: ['Increase Instances', 'Decrease Instances','Ignore'],
+                                    description: 'Select whether to add or reduce books instances.',
+                                    name: 'actionType'
+                                ),
+                                string(
+                                    defaultValue: '1',
+                                    description: 'Target instance count for book1',
+                                    name: 'instancesBook1'
+                                ),
+                                string(
+                                    defaultValue: '1',
+                                    description: 'Target instance count for book2',
+                                    name: 'instancesBook2'
+                                )
+                            ]
+                        )
+
+                        echo "Chosen action: ${scalingOptions.actionType}"
+                        echo "Instance configuration: book1=${scalingOptions.instancesBook1}"
+                        echo "Instance configuration: book2=${scalingOptions.instancesBook2}"
+
+                        if (scalingOptions.actionType == 'Increase Instances') {
+                            echo "Launching additional instances..."
+                            bat "docker-compose -f docker-compose-test.yml up --scale book1=${scalingOptions.instancesBook1} --scale book2=${scalingOptions.instancesBook2} -d"
+                        } else if (scalingOptions.actionType == 'Decrease Instances') {
+                            echo "Reducing instances to minimum..."
+                            bat 'docker-compose -f docker-compose-test.yml up --scale book1=0 --scale book2=0 -d'
+                        } else if (scalingOptions.actionType == 'Ignore') {
+                            echo "Ignoring this stage..."
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Test Env Dev') {
             steps {
                 script {
-                    // Start the services
-                    bat 'docker-compose -f docker-compose-dev.yml up -d'
 
-                    // Capture running container details
-                    def book1Port = sh(script: "docker ps --filter 'name=book1' --format '{{.Ports}}' | grep -oP '\\d+->8080' | cut -d'-' -f1", returnStdout: true).trim()
-                    def book2Port = sh(script: "docker ps --filter 'name=book2' --format '{{.Ports}}' | grep -oP '\\d+->8080' | cut -d'-' -f1", returnStdout: true).trim()
+                    def book1Port = bat(script: "docker ps --filter 'name=book1' --format '{{.Ports}}' | grep -oP '\\d+->8080' | cut -d'-' -f1", returnStdout: true).trim()
+                    def book2Port = bat(script: "docker ps --filter 'name=book2' --format '{{.Ports}}' | grep -oP '\\d+->8080' | cut -d'-' -f1", returnStdout: true).trim()
 
-                    // Log the dynamically assigned ports
                     echo "Book1 is running on port: ${book1Port}"
                     echo "Book2 is running on port: ${book2Port}"
 
-                    // Perform a curl test using the assigned ports
-                    sh "curl -X GET http://localhost:${book1Port}/health"
-                    sh "curl -X GET http://localhost:${book2Port}/health"
+                    bat "curl -X GET http://localhost:${book1Port}/health"
+                    bat "curl -X GET http://localhost:${book2Port}/health"
                 }
             }
         }
