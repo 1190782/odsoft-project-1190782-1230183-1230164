@@ -161,7 +161,7 @@ pipeline {
 
         stage('Tests') {
                 steps {
-                    dir('project2\\lms-userss') {
+                    dir('project2\\lms-bookss') {
                         script {
                             bat 'mvn test'
                         }
@@ -171,7 +171,7 @@ pipeline {
 
         stage('Jacoco') {
             steps {
-                dir('project2\\lms-userss') {
+                dir('project2\\lms-bookss') {
                     jacoco execPattern: '**/target/jacoco.exec',
                         classPattern: '**/target/classes',
                         sourcePattern: '**/src/main/java',
@@ -182,7 +182,7 @@ pipeline {
 
         stage('Publish JaCoCo Report') {
             steps {
-                dir('project2\\lms-userss') {
+                dir('project2\\lms-bookss') {
                     publishHTML([
                         reportDir: 'target/site/jacoco',
                         reportFiles: 'index.html',
