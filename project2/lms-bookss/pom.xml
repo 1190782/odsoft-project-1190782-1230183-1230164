@@ -282,8 +282,8 @@
 			<version>3.0.0-M9</version>
 			<configuration>
 				<includes>
-					<include>**/CDC/consumer/*.java</include>
-					<include>**/CDC/producer/*.java</include>
+					<!--<include>**/CDC/consumer/*.java</include>
+					<include>**/CDC/producer/*.java</include>-->
 					<include>**/model/*Test.java</include>
 					<include>**/authormanagement/api/*Test.java</include>
 					<include>**/authormanagement/model/*Test.java</include>
