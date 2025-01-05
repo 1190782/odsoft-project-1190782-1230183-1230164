@@ -324,9 +324,9 @@ pipeline {
                             def imageTag = "v${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
 
                             bat """
-                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml down --remove-orphans
-                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate --build \
-                                    --env-file <(echo "IMAGE_TAG=v${env.BRANCH_NAME}-${env.BUILD_NUMBER}")
+                                echo IMAGE_TAG=v${env.BRANCH_NAME}-${env.BUILD_NUMBER} > temp_env_file.env
+                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate --build --env-file temp_env_file.env
+                                del temp_env_file.env
                             """
                         }
                     }
