@@ -21,7 +21,7 @@ pipeline {
         IMAGE_NAME = 'lmsbooks'
         IMAGE_TAG = 'latest'
         DOCKERHUB_CREDENTIALS = credentials('1190782-dockerhub')
-        ENVIRONMENT = 'dev'
+        ENVIRONMENT_BRANCHES = 'prod dev test'
     }
 
      stages {
@@ -66,6 +66,42 @@ pipeline {
                     bat 'mvn clean compile'
                 }
                 
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                dir('project2\\lms-bookss') {
+                    script {
+                        bat 'mvn test'
+                    }
+                }
+            }
+        }
+
+        stage('Jacoco') {
+            steps {
+                dir('project2\\lms-bookss') {
+                    jacoco execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java',
+                        inclusionPattern: '**/*.class'
+                }
+            }
+        }
+
+        stage('Publish JaCoCo Report') {
+            steps {
+                dir('project2\\lms-bookss') {
+                    publishHTML([
+                        reportDir: 'target/site/jacoco',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Report',
+                        keepAll: true,
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true
+                    ])
+                }
             }
         }
 
@@ -164,7 +200,7 @@ pipeline {
                                             </style>
                                         </head>
                                         <body>
-                                            <h2>Pipeline Build Completed</h2>
+                                            <h2>Pipeline Build Completed for branch ${env.BRANCH_NAME}</h2>
                                             <p>The pipeline has successfully completed the build stage and is now awaiting your approval to proceed.</p>
 
                                             <h3>Next Steps:</h3>
@@ -194,7 +230,7 @@ pipeline {
                                         </body>
                                     </html>
                                 """,
-                                subject: "Pipeline Ready for Approval - ${BUILD_NUMBER}",
+                                subject: "Pipeline Ready for Approval on branch ${env.BRANCH_NAME} - ${BUILD_NUMBER}",
                                 to: 'engreq950@gmail.com',
                                 mimeType: 'text/html'  // Ensure the email is sent as HTML
                     } finally {
@@ -206,15 +242,22 @@ pipeline {
             }
         }
 
-        stage('Deploy Dev') {
+        stage('Deploy to Environment') {
             steps {
-                 dir('project2\\lms-bookss') {
+                dir('project2\\lms-bookss') {
                     script {
-                        echo "Deploying to Dev environment..."
-                        bat 'docker-compose -f docker-compose-dev.yml down --remove-orphans'
-                        bat 'docker-compose -f docker-compose-dev.yml up -d --force-recreate'
+                        def branches = ENVIRONMENT_BRANCHES.split(' ')
+                        if (!branches.contains(env.BRANCH_NAME)) {
+                            echo "Branch ${env.BRANCH_NAME} is not a valid environment branch."
+                            currentBuild.result = 'FAILURE'
+                            return
+                        } else {
+                            echo "Deploying to ${env.BRANCH_NAME} environment..."
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml down --remove-orphans"
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate"
+                        }
                     }
-                 }
+                }
             }
         }
 
@@ -222,7 +265,21 @@ pipeline {
             steps {
                 dir('project2\\lms-bookss') {
                     script {
-                        bat 'mvn verify -Dtest.container.url=http://localhost:2226'
+                        withEnv(["DOCKER_CONTAINER_NAME=lms-bookss-book2"]) {
+                            def book2Port = bat(
+                                script: '''
+                                for /F "tokens=2 delims=:" %%A in ('docker ps --filter "name=%DOCKER_CONTAINER_NAME%" --format "{{.Ports}}" ^| findstr "8080"') do @echo %%A
+                                ''', 
+                                returnStdout: true
+                            ).trim()
+
+                            book2Port = book2Port.split('->')[0].trim()
+                            book2PortNew = book2Port.split('@echo')[1].trim()
+                            book2PortNew = book2PortNew.split('/')[0].trim()
+                            book2PortNew1 = book2PortNew.split(' ')[1].trim()
+
+                            bat "mvn verify -Dtest.container.url=http://localhost:${book2PortNew1}"
+                        }
                     }
                 }
             }
@@ -271,7 +328,7 @@ pipeline {
             }
         }
  
-        stage('Test Env Dev') {
+        stage('Test Environment') {
             steps {
                 script {
                     withEnv(["DOCKER_CONTAINER_NAME=lms-bookss-book2"]) {
@@ -282,7 +339,6 @@ pipeline {
                             returnStdout: true
                         ).trim()
 
-                        // Clean up the extracted port number by removing everything after the first "->" if present
                         book2Port = book2Port.split('->')[0].trim()
                         book2PortNew = book2Port.split('@echo')[1].trim()
                         book2PortNew = book2PortNew.split('/')[0].trim()
@@ -290,93 +346,29 @@ pipeline {
 
                         echo "Book2 is running on port: ${book2PortNew1}"
 
-                        // Construct the curl command
                         def curlCommand = "curl -X GET http://localhost:${book2PortNew1}/health"
 
-                        echo "Testing Dev Env..."
+                        echo "Testing ${env.BRANCH_NAME} Environment..."
                         def success = bat(script: "${curlCommand}", returnStatus: true) == 0
                         if (!success) {
-                            echo 'Dev Env Failed'
+                            echo "Environment ${env.BRANCH_NAME} Failed"
                             currentBuild.result = 'FAILURE'
                             // HERE we should rollback
                             return
                         } else {
-                            echo 'Environment Dev is Good'
-                        }
-                        // Run the curl command to check health endpoint
-                    }
-                }
-            }
-        }
-
-        stage('Tests') {
-                steps {
-                    dir('project2\\lms-bookss') {
-                        script {
-                            bat 'mvn test'
+                            echo "Environment ${env.BRANCH_NAME} is Good"
                         }
                     }
                 }
             }
-
-        stage('Jacoco') {
-            steps {
-                dir('project2\\lms-bookss') {
-                    jacoco execPattern: '**/target/jacoco.exec',
-                        classPattern: '**/target/classes',
-                        sourcePattern: '**/src/main/java',
-                        inclusionPattern: '**/*.class'
-                }
-            }
         }
 
-        stage('Publish JaCoCo Report') {
-            steps {
-                dir('project2\\lms-bookss') {
-                    publishHTML([
-                        reportDir: 'target/site/jacoco',
-                        reportFiles: 'index.html',
-                        reportName: 'JaCoCo Report',
-                        keepAll: true,
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true
-                    ])
-                }
-            }
-        }
-
-        /* stage('Deploy with Docker Compose') {
-            steps {
-                script {
-                    bat """
-
-                        if ! docker ps --filter "name=rabbitmq_in_lms_network" --format '{{.Names}}' | grep -q rabbitmq_in_lms_network; then
-                          docker compose -f docker-compose-rabbitmq.yml up -d
-                        else
-                          echo "RabbitMQ container already running."
-                        fi
-
-                        if ! docker ps --filter "name=postgres_in_lms_network" --format '{{.Names}}' | grep -q postgres_in_lms_network; then
-                          docker compose -f docker-compose-postgres.yml up -d
-                        else
-                          echo "Postgres container already running."
-                        fi
-
-
-                        docker compose -f docker-compose.yml up -d --force-recreate
-
-                    """
-                }
-            }
-        } */
-
-        
     }
 
     post {
         always {
             echo 'Pipeline completed. Cleaning workspace...'
-            //cleanWs()
+            cleanWs()
         }
         success {
             echo 'Pipeline succeeded!'
