@@ -10,7 +10,7 @@ pipeline {
 
         //MAVEN_HOME = '/opt/homebrew' // (MacOS)
         MAVEN_HOME = '\\usr\\bin\\mvn' // (Ubuntu)
-        // Update PATH to include Maven's bin directory
+        // Update PATH to include Maven's bin directoryy
         PATH = "${env.PATH}:${MAVEN_HOME}"
 
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'  // Your Git repository URL
