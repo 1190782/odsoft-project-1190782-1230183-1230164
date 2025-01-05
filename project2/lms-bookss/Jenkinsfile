@@ -70,15 +70,15 @@ pipeline {
             }
         }
 
-         stage('Run Unit Tests') {
-            dir('project2\\lms-bookss') {
-                steps {
+        stage('Run Unit Tests') {
+            steps {
+                dir('project2\\lms-bookss') {
                     script {
                         bat 'mvn test -Dtest=model.**.*Tests'
                     }
                 }
             }
-         }
+        }
 
         stage('Run Integration Tests') {
             parallel {
