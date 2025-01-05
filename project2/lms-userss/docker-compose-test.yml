@@ -11,7 +11,7 @@ services:
         networks:
             - lms_network
         volumes:
-            - "uploaded_files_volume_1:/tmp"
+            - "users_files_volume_1:/tmp"
         deploy:
             replicas: 1
 
@@ -27,7 +27,7 @@ services:
         networks:
             - lms_network
         volumes:
-            - "uploaded_files_volume_2:/tmp"
+            - "users_files_volume_2:/tmp"
         deploy:
             replicas: 1
 
@@ -36,5 +36,5 @@ networks:
         external: true
 
 volumes:
-    uploaded_files_volume_1:
-    uploaded_files_volume_2:
+    users_files_volume_1:
+    users_files_volume_2:
