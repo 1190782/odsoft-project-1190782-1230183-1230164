@@ -24,7 +24,7 @@ pipeline {
         ENVIRONMENT = 'dev'
     }
 
-    stages {
+    /* stages {
         stage('Debug Environment') {
             steps {
                 bat 'java --version'
@@ -268,7 +268,7 @@ pipeline {
                 }
             }
         }
-
+ */
         stage('Test Env Dev') {
             steps {
                 script {
@@ -280,10 +280,18 @@ pipeline {
                             returnStdout: true
                         ).trim()
 
+                        echo "${book2Port}"
+
                         // Clean up the extracted port number by removing everything after the first "->" if present
                         book2Port = book2Port.split('->')[0].trim()
+                        echo "${book2Port}"
+
                         book2PortNew = book2Port.split('@echo')[1].trim()
+                        echo "${book2PortNew}"
+
                         book2PortNew = book2Port.split('/')[0].trim()
+                        echo "${book2PortNew}"
+
                         book2PortNew1 = book2Port.split(' ')[1].trim()
 
                         echo "Book2 is running on port: ${book2PortNew1}"
