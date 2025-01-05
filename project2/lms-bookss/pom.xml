@@ -293,6 +293,7 @@
 					<include>**/shared/model/*Test.java</include>
 				</includes>
 				<failIfNoTests>false</failIfNoTests>
+				<skipTests>${skipTests}</skipTests>
 			</configuration>
 		</plugin>
 
