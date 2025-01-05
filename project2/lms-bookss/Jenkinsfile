@@ -25,7 +25,6 @@ pipeline {
     }
 
      stages {
-        /*
         stage('Debug Environment') {
             steps {
                 bat 'java --version'
@@ -269,7 +268,7 @@ pipeline {
                 }
             }
         }
- */
+ 
         stage('Test Env Dev') {
             steps {
                 script {
