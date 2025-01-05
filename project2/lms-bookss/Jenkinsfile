@@ -290,10 +290,10 @@ pipeline {
                         book2PortNew = book2Port.split('@echo')[1].trim()
                         echo "${book2PortNew}"
 
-                        book2PortNew = book2Port.split('/')[0].trim()
+                        book2PortNew = book2PortNew.split('/')[0].trim()
                         echo "${book2PortNew}"
 
-                        book2PortNew1 = book2Port.split(' ')[1].trim()
+                        book2PortNew1 = book2PortNew.split(' ')[1].trim()
 
                         echo "Book2 is running on port: ${book2PortNew1}"
 
