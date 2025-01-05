@@ -299,10 +299,17 @@ pipeline {
 
                         // Construct the curl command
                         def curlCommand = "curl -X GET http://localhost:${book2PortNew1}/health"
-                        echo "Running curl command: ${curlCommand}"
 
+                        echo "Testing Dev Env..."
+                        def success = bat(script: "${curlCommand}", returnStatus: true) == 0
+                        if (!success) {
+                            echo 'Dev Env Failed'
+                            currentBuild.result = 'FAILURE'
+                            return
+                        } else {
+                            echo 'Environment Dev is Good'
+                        }
                         // Run the curl command to check health endpoint
-                        bat curlCommand
                     }
                 }
             }
