@@ -146,13 +146,21 @@ pipeline {
         stage('Test Env Dev') {
             steps {
                 script {
+                    // Extrair a porta de book1 usando PowerShell
+                    def book1Port = bat(script: """
+                        for /f "tokens=1 delims=->:" %%A in ('docker ps --filter "name=book1" --format "{{.Ports}}" ^| find "8080"') do @echo %%A
+                    """, returnStdout: true).trim()
 
-                    def book1Port = bat(script: "docker ps --filter 'name=book1' --format '{{.Ports}}' | grep -oP '\\d+->8080' | cut -d'-' -f1", returnStdout: true).trim()
-                    def book2Port = bat(script: "docker ps --filter 'name=book2' --format '{{.Ports}}' | grep -oP '\\d+->8080' | cut -d'-' -f1", returnStdout: true).trim()
+                    // Extrair a porta de book2 usando PowerShell
+                    def book2Port = bat(script: """
+                        for /f "tokens=1 delims=->:" %%A in ('docker ps --filter "name=book2" --format "{{.Ports}}" ^| find "8080"') do @echo %%A
+                    """, returnStdout: true).trim()
 
+                    // Log das portas identificadas
                     echo "Book1 is running on port: ${book1Port}"
                     echo "Book2 is running on port: ${book2Port}"
 
+                    // Testar as portas usando curl
                     bat "curl -X GET http://localhost:${book1Port}/health"
                     bat "curl -X GET http://localhost:${book2Port}/health"
                 }
