@@ -87,6 +87,49 @@ pipeline {
             }
         }
 
+        stage('Adjust Service Scaling') {
+            steps {
+                dir('project2\\lms-userss') {
+                    script {
+                        def scalingOptions = input(
+                            message: 'Define the scaling preferences for users:',
+                            parameters: [
+                                choice(
+                                    choices: ['Increase Instances', 'Decrease Instances'],
+                                    description: 'Select whether to add or reduce users instances.',
+                                    name: 'actionType'
+                                ),
+                                string(
+                                    defaultValue: '3',
+                                    description: 'Target instance count for users1',
+                                    name: 'instancesUsers1'
+                                ),
+                                string(
+                                    defaultValue: '3',
+                                    description: 'Target instance count for users2',
+                                    name: 'instancesUsers2'
+                                )
+                            ]
+                        )
+
+                        echo "Chosen action: ${scalingOptions.actionType}"
+                        echo "Instance configuration: users1=${scalingOptions.instancesUsers1}"
+                        echo "Instance configuration: users2=${scalingOptions.instancesUsers2}"
+
+                        bat 'docker-compose -f docker-compose-test.yml down --remove-orphans'
+
+                        if (scalingOptions.actionType == 'Increase Instances') {
+                            echo "Launching additional instances..."
+                            bat "docker-compose -f docker-compose-test.yml up --scale users1=${scalingOptions.instancesUsers1} --scale users2=${scalingOptions.instancesUsers2} -d"
+                        } else if (scalingOptions.actionType == 'Decrease Instances') {
+                            echo "Reducing instances to minimum..."
+                            bat 'docker-compose -f docker-compose-test.yml up --scale users1=0 --scale users2=0 -d'
+                        }
+                    }
+                }
+            }
+        }
+
          stage('Checkstyle') {
             steps {
                 dir('project2\\lms-userss') {
