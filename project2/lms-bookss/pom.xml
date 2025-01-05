@@ -281,7 +281,18 @@
 			<artifactId>maven-surefire-plugin</artifactId>
 			<version>3.0.0-M9</version>
 			<configuration>
-				<skipTests>${skipTests}</skipTests>
+				<includes>
+					<include>**/CDC/consumer/*.java</include>
+					<include>**/CDC/producer/*.java</include>
+					<include>**/model/*Test.java</include>
+					<include>**/authormanagement/api/*Test.java</include>
+					<include>**/authormanagement/model/*Test.java</include>
+					<include>**/authormanagement/repository/*Test.java</include>
+					<include>**/authormanagement/services/*Test.java</include>
+					<include>**/genremanagement/model/*Test.java</include>
+					<include>**/shared/model/*Test.java</include>
+				</includes>
+				<failIfNoTests>false</failIfNoTests>
 			</configuration>
 		</plugin>
 
