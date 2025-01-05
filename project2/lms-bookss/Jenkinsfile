@@ -146,15 +146,20 @@ pipeline {
         stage('Test Env Dev') {
             steps {
                 script {
-                    echo "Running tests on Dev..."
-                    def success = bat(script: "curl -f http://localhost:2226/health", returnStatus: true) == 0
-                    if (!success) {
-                        echo 'Test failed on Dev'
-                        currentBuild.result = 'FAILURE'
-                        return
-                    } else {
-                        echo 'Environment Dev is Good'
-                    }
+                    // Start the services
+                    bat 'docker-compose -f docker-compose-dev.yml up -d'
+
+                    // Capture running container details
+                    def book1Port = sh(script: "docker ps --filter 'name=book1' --format '{{.Ports}}' | grep -oP '\\d+->8080' | cut -d'-' -f1", returnStdout: true).trim()
+                    def book2Port = sh(script: "docker ps --filter 'name=book2' --format '{{.Ports}}' | grep -oP '\\d+->8080' | cut -d'-' -f1", returnStdout: true).trim()
+
+                    // Log the dynamically assigned ports
+                    echo "Book1 is running on port: ${book1Port}"
+                    echo "Book2 is running on port: ${book2Port}"
+
+                    // Perform a curl test using the assigned ports
+                    sh "curl -X GET http://localhost:${book1Port}/health"
+                    sh "curl -X GET http://localhost:${book2Port}/health"
                 }
             }
         }
@@ -336,7 +341,7 @@ pipeline {
             }
         } */
 
-        /* stage('Run Tests Against Container') {
+        stage('Run Tests Against Container') {
             steps {
                 dir('project2\\lms-bookss') {
                     script {
@@ -344,7 +349,7 @@ pipeline {
                     }
                 }
             }
-        } */
+        }
     }
 
     post {
