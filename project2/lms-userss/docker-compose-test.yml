@@ -1,6 +1,6 @@
 services:
-    book1:
-        image: 1190782/lmsbooks:latest
+    users1:
+        image: 1190782/lmsusers:latest
         build:
             context: ..
             dockerfile: Dockerfile
@@ -15,8 +15,8 @@ services:
         deploy:
             replicas: 1
 
-    book2:
-        image: 1190782/lmsbooks:latest
+    users2:
+        image: 1190782/lmsusers:latest
         build:
             context: ..
             dockerfile: Dockerfile

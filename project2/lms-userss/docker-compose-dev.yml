@@ -1,8 +1,7 @@
 
 services:
-    book1:
-        image: 1190782/lmsbooks:latest
-        #container_name: books1_in_lms_network
+    users1:
+        image: 1190782/lmsusers:latest
         build:
             context: ..
             dockerfile: Dockerfile
@@ -17,9 +16,8 @@ services:
         deploy:
             replicas: 1
 
-    book2:
-        image: 1190782/lmsbooks:latest
-        #container_name: books2_in_lms_network
+    users2:
+        image: 1190782/lmsusers:latest
         build:
             context: ..
             dockerfile: Dockerfile
