@@ -81,24 +81,28 @@ pipeline {
          }
 
         stage('Run Integration Tests') {
-            dir('project2\\lms-bookss') {
-                parallel {
-                    stage('Controller') {
-                        steps {
+            parallel {
+                stage('Controller') {
+                    steps {
+                        dir('project2\\lms-bookss') {
                             script {
                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.api.**.*Tests'
                             }
                         }
                     }
-                    stage('Repository') {
-                        steps {
+                }
+                stage('Repository') {
+                    steps {
+                        dir('project2\\lms-bookss') {
                             script {
                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.repository.**.*Tests'
                             }
                         }
                     }
-                    stage('Services') {
-                        steps {
+                }
+                stage('Services') {
+                    steps {
+                        dir('project2\\lms-bookss') {
                             script {
                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.services.**.*Tests'
                             }
@@ -108,19 +112,20 @@ pipeline {
             }
         }
 
-
         stage('Run Consumer-Driven Contract Tests') {
-            dir('project2\\lms-bookss') {
-                parallel {
-                    stage('Consumer') {
-                        steps {
+            parallel {
+                stage('Consumer') {
+                    steps {
+                        dir('project2\\lms-bookss') {
                             script {
                                 bat 'mvn test -Dtest=CDC.consumer.**.*'
                             }
                         }
                     }
-                    stage('Producer') {
-                        steps {
+                }
+                stage('Producer') {
+                    steps {
+                        dir('project2\\lms-bookss') {
                             script {
                                 bat 'mvn test -Dtest=CDC.producer.**.*'
                             }
@@ -129,6 +134,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Jacoco') {
             steps {
