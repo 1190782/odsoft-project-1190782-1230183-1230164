@@ -22,6 +22,7 @@ pipeline {
         IMAGE_TAG = 'latest'
         DOCKERHUB_CREDENTIALS = credentials('1190782-dockerhub')
         ENVIRONMENT_BRANCHES = 'prod dev test'
+        BUILD_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
     }
 
      stages {
@@ -108,8 +109,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('project2\\lms-bookss') {
-                    bat 'mvn package'
-                    bat 'docker build -t 1190782/lmsbooks:latest .'
+                    script {
+                        def imageTag = "v${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+                        echo "Building Docker image with tag: ${imageTag}"
+
+                        bat "docker build -t 1190782/${IMAGE_NAME}:${imageTag} ."
+                    }
                 }
             }
         }
@@ -117,11 +122,16 @@ pipeline {
         stage('Docker Image Push Repository') {
             steps {
                 dir('project2\\lms-bookss') {
+                    script {
+                        def imageTag = "v${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+                        echo "Pushing Docker image with tag: ${imageTag}"
+
                         withCredentials([usernamePassword(credentialsId: '1190782-dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-                            bat "docker push 1190782/lmsbooks:latest"
+                            bat "docker push 1190782/${IMAGE_NAME}:${imageTag}"
                             bat 'docker logout'
                         }
+                    }
                 }
             }
         }
@@ -253,6 +263,9 @@ pipeline {
                             return
                         } else {
                             echo "Deploying to ${env.BRANCH_NAME} environment..."
+
+                            def imageTag = "v${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+
                             bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml down --remove-orphans"
                             bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate"
                         }
@@ -353,7 +366,13 @@ pipeline {
                         if (!success) {
                             echo "Environment ${env.BRANCH_NAME} Failed"
                             currentBuild.result = 'FAILURE'
-                            // HERE we should rollback
+                            echo "Rolling back the deployment to the previous version..."
+                            bat """
+                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml down
+                                docker pull 1190782/lmsbooks:v${env.BRANCH_NAME}-${env.BUILD_NUMBER - 1}
+                                docker tag 1190782/lmsbooks:v${env.BRANCH_NAME}-${env.BUILD_NUMBER - 1} 1190782/lmsbooks:latest
+                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate
+                            """
                             return
                         } else {
                             echo "Environment ${env.BRANCH_NAME} is Good"
