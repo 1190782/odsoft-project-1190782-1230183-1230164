@@ -74,7 +74,7 @@ pipeline {
             steps {
                 dir('project2\\lms-bookss') {
                     script {
-                        bat 'mvn test -Dtest=model.**.*Tests'
+                        bat 'mvn test -Dtest=model.*Test'
                     }
                 }
             }
@@ -86,7 +86,7 @@ pipeline {
                     steps {
                         dir('project2\\lms-bookss') {
                             script {
-                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.api.**.*Tests'
+                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.api.*Test'
                             }
                         }
                     }
@@ -95,7 +95,7 @@ pipeline {
                     steps {
                         dir('project2\\lms-bookss') {
                             script {
-                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.repository.**.*Tests'
+                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.repository.*Test'
                             }
                         }
                     }
@@ -104,7 +104,7 @@ pipeline {
                     steps {
                         dir('project2\\lms-bookss') {
                             script {
-                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.services.**.*Tests'
+                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.services.*Test'
                             }
                         }
                     }
@@ -118,7 +118,7 @@ pipeline {
                     steps {
                         dir('project2\\lms-bookss') {
                             script {
-                                bat 'mvn test -Dtest=CDC.consumer.**.*'
+                                bat 'mvn test -Dtest=CDC.consumer.*'
                             }
                         }
                     }
@@ -127,7 +127,7 @@ pipeline {
                     steps {
                         dir('project2\\lms-bookss') {
                             script {
-                                bat 'mvn test -Dtest=CDC.producer.**.*'
+                                bat 'mvn test -Dtest=CDC.producer.*'
                             }
                         }
                     }
