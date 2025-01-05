@@ -282,11 +282,14 @@ pipeline {
 
                         // Clean up the extracted port number by removing everything after the first "->" if present
                         book2Port = book2Port.split('->')[0].trim()
+                        book2PortNew = book2Port.split('@echo')[1].trim()
+                        book2PortNew = book2Port.split('/')[0].trim()
+                        book2PortNew1 = book2Port.split(' ')[1].trim()
 
-                        echo "Book2 is running on port: ${book2Port}"
+                        echo "Book2 is running on port: ${book2PortNew1}"
 
                         // Construct the curl command
-                        def curlCommand = "curl -X GET http://localhost:${book2Port}/health"
+                        def curlCommand = "curl -X GET http://localhost:${book2PortNew1}/health"
                         echo "Running curl command: ${curlCommand}"
 
                         // Run the curl command to check health endpoint
