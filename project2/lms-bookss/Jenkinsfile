@@ -42,8 +42,10 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                // Step to clone the Git repository
-                git branch: "${GIT_BRANCH}",
+                script {
+                    echo "Checking out branch ${env.BRANCH_NAME}..."
+                }
+                git branch: "${env.BRANCH_NAME}",
                     url: "${GIT_REPO_URL}"
             }
         }
