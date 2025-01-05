@@ -285,8 +285,11 @@ pipeline {
 
                         echo "Book2 is running on port: ${book2Port}"
 
-                        // Use the extracted and cleaned port
-                        bat "curl -X GET http://localhost:${book2Port}/health"
+                        // Fix for using curl properly
+                        def curlCommand = "curl -X GET http://localhost:${book2Port}/health"
+                        echo "Running curl command: ${curlCommand}"
+
+                        bat curlCommand
                     }
                 }
             }
