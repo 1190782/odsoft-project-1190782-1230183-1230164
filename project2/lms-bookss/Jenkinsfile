@@ -280,9 +280,12 @@ pipeline {
                             returnStdout: true
                         ).trim()
 
+                        // Clean up the port to remove "->8080/tcp"
+                        book2Port = book2Port.replaceAll("-.*", "").trim()
+
                         echo "Book2 is running on port: ${book2Port}"
 
-                        // Use the dynamically extracted port
+                        // Use the extracted and cleaned port
                         bat "curl -X GET http://localhost:${book2Port}/health"
                     }
                 }
