@@ -272,6 +272,8 @@ pipeline {
         stage('Test Env Dev') {
             steps {
                 script {
+                    bat 'docker ps'
+
                     // Extrair a porta de book1 usando PowerShell embutido no CMD
                     def book1Port = bat(script: """
                         for /f "tokens=2 delims=:" %%A in ('docker ps --filter "name=book1" --format "{{.Ports}}" ^| find "8080"') do @echo %%A
