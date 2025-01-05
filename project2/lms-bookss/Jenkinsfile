@@ -281,18 +281,10 @@ pipeline {
                             returnStdout: true
                         ).trim()
 
-                        echo "${book2Port}"
-
                         // Clean up the extracted port number by removing everything after the first "->" if present
                         book2Port = book2Port.split('->')[0].trim()
-                        echo "${book2Port}"
-
                         book2PortNew = book2Port.split('@echo')[1].trim()
-                        echo "${book2PortNew}"
-
                         book2PortNew = book2PortNew.split('/')[0].trim()
-                        echo "${book2PortNew}"
-
                         book2PortNew1 = book2PortNew.split(' ')[1].trim()
 
                         echo "Book2 is running on port: ${book2PortNew1}"
@@ -305,6 +297,7 @@ pipeline {
                         if (!success) {
                             echo 'Dev Env Failed'
                             currentBuild.result = 'FAILURE'
+                            // HERE we should rollback
                             return
                         } else {
                             echo 'Environment Dev is Good'
