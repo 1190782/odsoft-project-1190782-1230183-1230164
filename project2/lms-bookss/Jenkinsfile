@@ -346,10 +346,19 @@ pipeline {
                                 returnStdout: true
                             ).trim()
 
+                            echo "Raw output of docker ps command: ${book2Port}"
+
                             book2Port = book2Port.split('->')[0].trim()
+                            echo "book2Port after split: ${book2Port}"
+
                             book2PortNew = book2Port.split('@echo')[1].trim()
+                            echo "book2PortNew after splitting by '@echo': ${book2PortNew}"
+
                             book2PortNew = book2PortNew.split('/')[0].trim()
+                            echo "book2PortNew after splitting by '/': ${book2PortNew}"
+
                             book2PortNew1 = book2PortNew.split(' ')[1].trim()
+                            echo "book2PortNew1 after final split: ${book2PortNew1}"
 
                             bat "mvn verify -Dtest.container.url=http://localhost:${book2PortNew1}"
                         }
