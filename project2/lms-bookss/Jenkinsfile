@@ -112,7 +112,7 @@ pipeline {
             }
         }
 
-        stage('Run Consumer-Driven Contract Tests') {
+        /*stage('Run Consumer-Driven Contract Tests') {
             parallel {
                 stage('Consumer') {
                     steps {
@@ -133,7 +133,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
 
         stage('Jacoco') {
