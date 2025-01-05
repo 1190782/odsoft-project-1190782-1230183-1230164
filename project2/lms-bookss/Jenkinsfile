@@ -70,15 +70,58 @@ pipeline {
             }
         }
 
-        stage('Tests') {
-            steps {
-                dir('project2\\lms-bookss') {
-                    script {
-                        bat 'mvn test'
+         stage('Run Unit Tests') {
+             steps {
+                 script {
+                     bat 'mvn test -Dtest=model.**.*Tests'
+                 }
+             }
+         }
+
+         stage('Run Integration Tests') {
+              parallel {
+                  stage('Controller') {
+                      steps {
+                          script {
+                              bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.api.**.*Tests'
+                          }
+                      }
+                  }
+                  stage('Repository') {
+                      steps {
+                          script {
+                              bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.repository.**.*Tests'
+                          }
+                      }
+                  }
+                  stage('Services') {
+                        steps {
+                            script {
+                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.services.**.*Tests'
+                            }
+                        }
                     }
-                }
-            }
-        }
+              }
+          }
+
+        stage('Run Consumer-Driven Contract Tests') {
+              parallel {
+                  stage('Consumer') {
+                      steps {
+                          script {
+                              bat 'mvn test -Dtest=CDC.consumer.**.*'
+                          }
+                      }
+                  }
+                  stage('Producer') {
+                      steps {
+                          script {
+                              bat 'mvn test -Dtest=CDC.producer.**.*'
+                          }
+                      }
+                  }
+              }
+          }
 
         stage('Jacoco') {
             steps {
