@@ -24,7 +24,8 @@ pipeline {
         ENVIRONMENT = 'dev'
     }
 
-    /* stages {
+     stages {
+        /*
         stage('Debug Environment') {
             steps {
                 bat 'java --version'
