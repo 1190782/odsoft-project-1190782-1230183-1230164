@@ -69,37 +69,45 @@ pipeline {
         
         stage('Run Unit Tests') {
             steps {
-                script {
-                    bat 'mvn test -Dtest=model.*Test'
+                dir('project2\\lms-bookss') {
+                    script {
+                        bat 'mvn test -Dtest=model.*Test'
+                    }
                 }
             }
         }
 
-         stage('Run Integration Tests') {
-              parallel {
-                  stage('Controller') {
-                      steps {
-                          script {
-                              bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.api.*Test'
-                          }
-                      }
-                  }
-                  stage('Repository') {
-                      steps {
-                          script {
-                              bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.repository.*Test'
-                          }
-                      }
-                  }
-                  stage('Services') {
-                        steps {
+        stage('Run Integration Tests') {
+            parallel {
+                stage('Controller') {
+                    steps {
+                        dir('project2\\lms-bookss') {
+                            script {
+                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.api.*Test'
+                            }
+                        }
+                    }
+                }
+                stage('Repository') {
+                    steps {
+                        dir('project2\\lms-bookss') {
+                            script {
+                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.repository.*Test'
+                            }
+                        }
+                    }
+                }
+                stage('Services') {
+                    steps {
+                        dir('project2\\lms-bookss') {
                             script {
                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.services.*Test'
                             }
                         }
                     }
-              }
-          }
+                }
+            }
+        }
 
         /*stage('Run Consumer-Driven Contract Tests') {
             parallel {
