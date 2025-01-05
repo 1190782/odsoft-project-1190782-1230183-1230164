@@ -8,13 +8,11 @@ pipeline {
 
     environment {
 
-        //MAVEN_HOME = '/opt/homebrew' // (MacOS)
         MAVEN_HOME = '\\usr\\bin\\mvn' // (Ubuntu)
-        // Update PATH to include Maven's bin directory
         PATH = "${env.PATH}:${MAVEN_HOME}"
 
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'  // Your Git repository URL
-        GIT_BRANCH = 'main'  // Specify the branch to check out
+        GIT_BRANCH = 'main'
 
         SERVER_PORT = '2226'
         GITHUB_TOKEN_ID = 'PASSWORD_JENKINS_SECRET'
@@ -360,10 +358,10 @@ pipeline {
 
                         if (scalingOptions.actionType == 'Increase Instances') {
                             echo "Launching additional instances..."
-                            bat "docker-compose -f docker-compose-test.yml up --scale book1=${scalingOptions.instancesBook1} --scale book2=${scalingOptions.instancesBook2} -d"
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up --scale book1=${scalingOptions.instancesBook1} --scale book2=${scalingOptions.instancesBook2} -d"
                         } else if (scalingOptions.actionType == 'Decrease Instances') {
                             echo "Reducing instances to minimum..."
-                            bat 'docker-compose -f docker-compose-test.yml up --scale book1=0 --scale book2=0 -d'
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up --scale book1=0 --scale book2=0 -d"
                         } else if (scalingOptions.actionType == 'Ignore') {
                             echo "Ignoring this stage..."
                         }
@@ -397,7 +395,13 @@ pipeline {
                         if (!success) {
                             echo "Environment ${env.BRANCH_NAME} Failed"
                             currentBuild.result = 'FAILURE'
-                            // HERE we should rollback
+                            echo "Rolling back the deployment to the previous version..."
+                            bat """
+                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml down
+                                docker pull 1190782/lmsbooks:latest
+                                docker tag 1190782/lmsbooks:latest 1190782/lmsbooks:latest
+                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate
+                            """
                             return
                         } else {
                             echo "Environment ${env.BRANCH_NAME} is Good"

@@ -7,13 +7,18 @@ pipeline {
     }
 
     environment {
-        MAVEN_HOME = '\\usr\\bin\\mvn'
+        MAVEN_HOME = '\\usr\\bin\\mvn' // (Ubuntu)
         PATH = "${env.PATH}:${MAVEN_HOME}"
-        GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'
+
+        GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'  // Your Git repository URL
         GIT_BRANCH = 'main'
+
         SERVER_PORT = '2226'
+        GITHUB_TOKEN_ID = 'PASSWORD_JENKINS_SECRET'
         IMAGE_NAME = 'lmsusers'
         IMAGE_TAG = 'latest'
+        DOCKERHUB_CREDENTIALS = credentials('1190782-dockerhub')
+        ENVIRONMENT_BRANCHES = 'prod dev test'
     }
 
     stages {
@@ -34,41 +39,69 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: "${GIT_BRANCH}",
+                script {
+                    echo "Checking out branch ${env.BRANCH_NAME}..."
+                }
+                git branch: "${env.BRANCH_NAME}",
                     url: "${GIT_REPO_URL}"
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                dir('project2\\lms-bookss') {
+                dir('project2\\lms-userss') {
                     echo 'Installing dependencies...'
                     bat 'mvn dependency:resolve'
                 }
             }
         }
 
-        stage('Build') {
+        stage('Clean & Build') {
             steps {
                 dir('project2\\lms-userss') {
                     bat 'dir'
                     bat 'mvn clean compile'
                 }
-
             }
         }
 
-        stage('Run Tests Against Container') {
+        stage('Run Unit And Integration Tests') {
             steps {
                 dir('project2\\lms-userss') {
                     script {
-                        bat 'mvn verify -Dtest.container.url=http://localhost:2226'
+                        bat 'mvn test'
                     }
                 }
             }
         }
 
-        stage('Docker Build') {
+        stage('Jacoco') {
+            steps {
+                dir('project2\\lms-userss') {
+                    jacoco execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java',
+                        inclusionPattern: '**/*.class'
+                }
+            }
+        }
+
+        stage('Publish JaCoCo Report') {
+            steps {
+                dir('project2\\lms-userss') {
+                    publishHTML([
+                        reportDir: 'target/site/jacoco',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Report',
+                        keepAll: true,
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true
+                    ])
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
             steps {
                 dir('project2\\lms-userss') {
                     bat 'mvn package'
@@ -80,9 +113,170 @@ pipeline {
         stage('Docker Image Push Repository') {
             steps {
                 dir('project2\\lms-userss') {
-                    bat 'docker login -u 1190782 -p dckr_pat_78I6z_Ldwkw1VgXleBe7Oa6F3f0'
-                    bat 'docker push 1190782/lmsusers:latest'
-                    bat 'docker logout'
+                    withCredentials([usernamePassword(credentialsId: '1190782-dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                        bat "docker push 1190782/lmsusers:latest"
+                        bat 'docker logout'
+                    }
+                }
+            }
+        }
+
+        stage("Send Email for Approval") {
+            steps {
+                script {
+                    echo "Sending email"
+                    try {
+                        // Send an HTML email notification with instructions for approval
+                        emailext attachLog: true,
+                                body: """
+                                    <html>
+                                        <head>
+                                            <style>
+                                                body {
+                                                    font-family: Arial, sans-serif;
+                                                    background-color: #f4f4f9;
+                                                    margin: 0;
+                                                    padding: 20px;
+                                                }
+                                                h2 {
+                                                    color: #333366;
+                                                    font-size: 24px;
+                                                    margin-bottom: 10px;
+                                                }
+                                                h3 {
+                                                    color: #444444;
+                                                    font-size: 20px;
+                                                    margin-top: 20px;
+                                                }
+                                                p {
+                                                    color: #555555;
+                                                    font-size: 16px;
+                                                    line-height: 1.6;
+                                                }
+                                                ul {
+                                                    margin: 20px 0;
+                                                    padding-left: 20px;
+                                                    list-style-type: disc;
+                                                }
+                                                li {
+                                                    font-size: 16px;
+                                                    color: #555555;
+                                                }
+                                                a {
+                                                    color: rgb(255, 255, 255);
+                                                    text-decoration: none;
+                                                }
+                                                a:hover {
+                                                    text-decoration: underline;
+                                                }
+                                                .cta-button {
+                                                    display: inline-block;
+                                                    padding: 10px 20px;
+                                                    margin-top: 20px;
+                                                    background: linear-gradient(45deg, #0073e6, #005bb5);
+                                                    color: white;
+                                                    font-size: 16px;
+                                                    text-decoration: none;
+                                                    border-radius: 5px;
+                                                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                                                }
+                                                .cta-button:hover {
+                                                    background: linear-gradient(45deg, #00bfae, #00a68f);
+                                                    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+                                                }
+                                                .footer-text {
+                                                    color: white;
+                                                    font-size: 14px;
+                                                    background-color: #333366;
+                                                    padding: 10px;
+                                                    text-align: center;
+                                                    border-radius: 5px;
+                                                }
+                                            </style>
+                                        </head>
+                                        <body>
+                                            <h2>Pipeline Build Completed for branch ${env.BRANCH_NAME}</h2>
+                                            <p>The pipeline has successfully completed the build stage and is now awaiting your approval to proceed.</p>
+
+                                            <h3>Next Steps:</h3>
+                                            <ul>
+                                                <li>Review the build results.</li>
+                                                <li>Approve the next steps to proceed with deployment.</li>
+                                            </ul>
+
+                                            <p>After your approval, the pipeline will continue to the deployment stage.</p>
+
+                                            <p><strong>Pipeline URL:</strong> <a style="color: black" href="${BUILD_URL}console">${BUILD_URL}console</a></p>
+
+                                            <p><strong>Instructions:</strong></p>
+                                            <ul>
+                                                <li>Click the link above to view the build details.</li>
+                                                <li>Once you have reviewed the build logs, click the "Proceed" button below to approve.</li>
+                                            </ul>
+
+                                            <!-- Button with inline style for the color -->
+                                            <a style="color: white" href="${BUILD_URL}input" class="cta-button">Proceed to Approval</a>
+
+                                            <p>If you have any questions or concerns, please contact the team.</p>
+
+                                            <div class="footer-text">
+                                                Thank you for reviewing the pipeline.
+                                            </div>
+                                        </body>
+                                    </html>
+                                """,
+                                subject: "Pipeline Ready for Approval on branch ${env.BRANCH_NAME} - ${BUILD_NUMBER}",
+                                to: 'engreq950@gmail.com',
+                                mimeType: 'text/html'  // Ensure the email is sent as HTML
+                    } finally {
+                        echo "Email sent"
+                        // Pause for manual approval
+                        input message: "Do you want to continue?", ok: "Approve", parameters: []
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Environment') {
+            steps {
+                dir('project2\\lms-userss') {
+                    script {
+                        def branches = ENVIRONMENT_BRANCHES.split(' ')
+                        if (!branches.contains(env.BRANCH_NAME)) {
+                            echo "Branch ${env.BRANCH_NAME} is not a valid environment branch."
+                            currentBuild.result = 'FAILURE'
+                            return
+                        } else {
+                            echo "Deploying to ${env.BRANCH_NAME} environment..."
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml down --remove-orphans"
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Run Tests Against Container') {
+            steps {
+                dir('project2\\lms-userss') {
+                    script {
+                        withEnv(["DOCKER_CONTAINER_NAME=lms-userss-users1"]) {
+                            def user2Port = bat(
+                                script: '''
+                                for /F "tokens=2 delims=:" %%A in ('docker ps --filter "name=%DOCKER_CONTAINER_NAME%" --format "{{.Ports}}" ^| findstr "8080"') do @echo %%A
+                                ''', 
+                                returnStdout: true
+                            ).trim()
+
+                            user2Port = user2Port.split('->')[0].trim()
+                            user2PortNew = user2Port.split('@echo')[1].trim()
+                            user2PortNew = user2PortNew.split('/')[0].trim()
+                            user2PortNew1 = user2PortNew.split(' ')[1].trim()
+
+                            bat "mvn verify -Dtest.container.url=http://localhost:${user2PortNew1}"
+                        }
+                    }
                 }
             }
         }
@@ -95,217 +289,81 @@ pipeline {
                             message: 'Define the scaling preferences for users:',
                             parameters: [
                                 choice(
-                                    choices: ['Increase Instances', 'Decrease Instances'],
+                                    choices: ['Increase Instances', 'Decrease Instances','Ignore'],
                                     description: 'Select whether to add or reduce users instances.',
                                     name: 'actionType'
                                 ),
                                 string(
-                                    defaultValue: '3',
-                                    description: 'Target instance count for users1',
-                                    name: 'instancesUsers1'
+                                    defaultValue: '1',
+                                    description: 'Target instance count for User1',
+                                    name: 'instancesUser1'
                                 ),
                                 string(
-                                    defaultValue: '3',
-                                    description: 'Target instance count for users2',
-                                    name: 'instancesUsers2'
+                                    defaultValue: '1',
+                                    description: 'Target instance count for User2',
+                                    name: 'instancesUser2'
                                 )
                             ]
                         )
 
                         echo "Chosen action: ${scalingOptions.actionType}"
-                        echo "Instance configuration: users1=${scalingOptions.instancesUsers1}"
-                        echo "Instance configuration: users2=${scalingOptions.instancesUsers2}"
-
-                        bat 'docker-compose -f docker-compose-test.yml down --remove-orphans'
+                        echo "Instance configuration: User1=${scalingOptions.instancesUser1}"
+                        echo "Instance configuration: User2=${scalingOptions.instancesUser2}"
 
                         if (scalingOptions.actionType == 'Increase Instances') {
                             echo "Launching additional instances..."
-                            bat "docker-compose -f docker-compose-test.yml up --scale users1=${scalingOptions.instancesUsers1} --scale users2=${scalingOptions.instancesUsers2} -d"
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up --scale users1=${scalingOptions.instancesUser1} --scale users2=${scalingOptions.instancesUser2} -d"
                         } else if (scalingOptions.actionType == 'Decrease Instances') {
                             echo "Reducing instances to minimum..."
-                            bat 'docker-compose -f docker-compose-test.yml up --scale users1=0 --scale users2=0 -d'
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up --scale users1=0 --scale users2=0 -d"
+                        } else if (scalingOptions.actionType == 'Ignore') {
+                            echo "Ignoring this stage..."
                         }
                     }
                 }
             }
         }
 
-         stage('Checkstyle') {
+        stage('Test Environment') {
             steps {
-                dir('project2\\lms-userss') {
-                    script {
-                        bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                script {
+                    withEnv(["DOCKER_CONTAINER_NAME=lms-userss-users2"]) {
+                        def user2Port = bat(
+                            script: '''
+                            for /F "tokens=2 delims=:" %%A in ('docker ps --filter "name=%DOCKER_CONTAINER_NAME%" --format "{{.Ports}}" ^| findstr "8080"') do @echo %%A
+                            ''', 
+                            returnStdout: true
+                        ).trim()
+
+                        user2Port = user2Port.split('->')[0].trim()
+                        user2PortNew = user2Port.split('@echo')[1].trim()
+                        user2PortNew = user2PortNew.split('/')[0].trim()
+                        user2PortNew1 = user2PortNew.split(' ')[1].trim()
+
+                        echo "user2 is running on port: ${user2PortNew1}"
+
+                        def curlCommand = "curl -X GET http://localhost:${user2PortNew1}/health"
+
+                        echo "Testing ${env.BRANCH_NAME} Environment..."
+                        def success = bat(script: "${curlCommand}", returnStatus: true) == 0
+                        if (!success) {
+                            echo "Environment ${env.BRANCH_NAME} Failed"
+                            currentBuild.result = 'FAILURE'
+                            echo "Rolling back the deployment to the previous version..."
+                            bat """
+                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml down
+                                docker pull 1190782/lmsusers:latest
+                                docker tag 1190782/lmsusers:latest 1190782/lmsbooks:latest
+                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate
+                            """
+                            return
+                        } else {
+                            echo "Environment ${env.BRANCH_NAME} is Good"
+                        }
                     }
                 }
             }
-         }
-
-         stage('Publish Checkstyle Report') {
-             steps {
-                dir('project2\\lms-userss') {
-                     publishHTML([
-                         reportDir: 'target/site',
-                         reportFiles: 'checkstyle.html',
-                         reportName: 'Checkstyle Report',
-                         keepAll: true,
-                         allowMissing: false,
-                         alwaysLinkToLastBuild: true
-                     ])
-                }
-             }
-         }
-
-         stage('Tests') {
-              steps {
-                  dir('project2\\lms-userss') {
-                      script {
-                            bat 'mvn test'
-                      }
-                  }
-              }
-         }
-
-         stage('Jacoco') {
-             steps {
-                 dir('project2\\lms-userss') {
-                     jacoco execPattern: '**/target/jacoco.exec',
-                            classPattern: '**/target/classes',
-                            sourcePattern: '**/src/main/java',
-                            inclusionPattern: '**/*.class'
-                 }
-             }
-         }
-
-         stage('Publish JaCoCo Report') {
-             steps {
-                 dir('project2\\lms-userss') {
-                     publishHTML([
-                         reportDir: 'target/site/jacoco',
-                         reportFiles: 'index.html',
-                         reportName: 'JaCoCo Report',
-                         keepAll: true,
-                         allowMissing: false,
-                         alwaysLinkToLastBuild: true
-                     ])
-                 }
-             }
-         }
-
-         stage("Send Email for Approval") {
-                     steps {
-                         script {
-                             echo "Sending email"
-                             try {
-                                 // Send an HTML email notification with instructions for approval
-                                 emailext attachLog: true,
-                                         body: """
-                                             <html>
-                                                 <head>
-                                                     <style>
-                                                         body {
-                                                             font-family: Arial, sans-serif;
-                                                             background-color: #f4f4f9;
-                                                             margin: 0;
-                                                             padding: 20px;
-                                                         }
-                                                         h2 {
-                                                             color: #333366;
-                                                             font-size: 24px;
-                                                             margin-bottom: 10px;
-                                                         }
-                                                         h3 {
-                                                             color: #444444;
-                                                             font-size: 20px;
-                                                             margin-top: 20px;
-                                                         }
-                                                         p {
-                                                             color: #555555;
-                                                             font-size: 16px;
-                                                             line-height: 1.6;
-                                                         }
-                                                         ul {
-                                                             margin: 20px 0;
-                                                             padding-left: 20px;
-                                                             list-style-type: disc;
-                                                         }
-                                                         li {
-                                                             font-size: 16px;
-                                                             color: #555555;
-                                                         }
-                                                         a {
-                                                             color: rgb(255, 255, 255);
-                                                             text-decoration: none;
-                                                         }
-                                                         a:hover {
-                                                             text-decoration: underline;
-                                                         }
-                                                         .cta-button {
-                                                             display: inline-block;
-                                                             padding: 10px 20px;
-                                                             margin-top: 20px;
-                                                             background: linear-gradient(45deg, #0073e6, #005bb5);
-                                                             color: white;
-                                                             font-size: 16px;
-                                                             text-decoration: none;
-                                                             border-radius: 5px;
-                                                             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                                                         }
-                                                         .cta-button:hover {
-                                                             background: linear-gradient(45deg, #00bfae, #00a68f);
-                                                             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-                                                         }
-                                                         .footer-text {
-                                                             color: white;
-                                                             font-size: 14px;
-                                                             background-color: #333366;
-                                                             padding: 10px;
-                                                             text-align: center;
-                                                             border-radius: 5px;
-                                                         }
-                                                     </style>
-                                                 </head>
-                                                 <body>
-                                                     <h2>Pipeline Build Completed</h2>
-                                                     <p>The pipeline has successfully completed the build stage and is now awaiting your approval to proceed.</p>
-
-                                                     <h3>Next Steps:</h3>
-                                                     <ul>
-                                                         <li>Review the build results.</li>
-                                                         <li>Approve the next steps to proceed with deployment.</li>
-                                                     </ul>
-
-                                                     <p>After your approval, the pipeline will continue to the deployment stage.</p>
-
-                                                     <p><strong>Pipeline URL:</strong> <a style="color: black" href="${BUILD_URL}console">${BUILD_URL}console</a></p>
-
-                                                     <p><strong>Instructions:</strong></p>
-                                                     <ul>
-                                                         <li>Click the link above to view the build details.</li>
-                                                         <li>Once you have reviewed the build logs, click the "Proceed" button below to approve.</li>
-                                                     </ul>
-
-                                                     <!-- Button with inline style for the color -->
-                                                     <a style="color: white" href="${BUILD_URL}input" class="cta-button">Proceed to Approval</a>
-
-                                                     <p>If you have any questions or concerns, please contact the team.</p>
-
-                                                     <div class="footer-text">
-                                                         Thank you for reviewing the pipeline.
-                                                     </div>
-                                                 </body>
-                                             </html>
-                                         """,
-                                         subject: "Pipeline Ready for Approval - ${BUILD_NUMBER}",
-                                         to: 'engreq950@gmail.com',
-                                         mimeType: 'text/html'  // Ensure the email is sent as HTML
-                             } finally {
-                                 echo "Email sent"
-                                 // Pause for manual approval
-                                 input message: "Do you want to continue?", ok: "Approve", parameters: []
-                             }
-                         }
-                     }
-                 }
+        }
     }
 
     post {
