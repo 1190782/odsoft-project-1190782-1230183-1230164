@@ -10,7 +10,7 @@ pipeline {
 
         //MAVEN_HOME = '/opt/homebrew' // (MacOS)
         MAVEN_HOME = '\\usr\\bin\\mvn' // (Ubuntu)
-        // Update PATH to include Maven's bin directoryy
+        // Update PATH to include Maven's bin directory
         PATH = "${env.PATH}:${MAVEN_HOME}"
 
         GIT_REPO_URL = 'https://github.com/1190782/odsoft-project-1190782-1230183-1230164.git'  // Your Git repository URL
@@ -22,7 +22,6 @@ pipeline {
         IMAGE_TAG = 'latest'
         DOCKERHUB_CREDENTIALS = credentials('1190782-dockerhub')
         ENVIRONMENT_BRANCHES = 'prod dev test'
-        BUILD_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
     }
 
      stages {
@@ -69,66 +68,54 @@ pipeline {
                 
             }
         }
-
+        
         stage('Run Unit Tests') {
             steps {
-                dir('project2\\lms-bookss') {
-                    script {
-                        bat 'mvn test -Dtest=model.*Test'
-                    }
+                script {
+                    bat 'mvn test -Dtest=model.*Test'
                 }
             }
         }
 
-        stage('Run Integration Tests') {
-            parallel {
-                stage('Controller') {
-                    steps {
-                        dir('project2\\lms-bookss') {
-                            script {
-                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.api.*Test'
-                            }
-                        }
-                    }
-                }
-                stage('Repository') {
-                    steps {
-                        dir('project2\\lms-bookss') {
-                            script {
-                                bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.repository.*Test'
-                            }
-                        }
-                    }
-                }
-                stage('Services') {
-                    steps {
-                        dir('project2\\lms-bookss') {
+         stage('Run Integration Tests') {
+              parallel {
+                  stage('Controller') {
+                      steps {
+                          script {
+                              bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.api.*Test'
+                          }
+                      }
+                  }
+                  stage('Repository') {
+                      steps {
+                          script {
+                              bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.repository.*Test'
+                          }
+                      }
+                  }
+                  stage('Services') {
+                        steps {
                             script {
                                 bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.authormanagement.services.*Test'
                             }
                         }
                     }
-                }
-            }
-        }
+              }
+          }
 
         /*stage('Run Consumer-Driven Contract Tests') {
             parallel {
                 stage('Consumer') {
                     steps {
-                        dir('project2\\lms-bookss') {
-                            script {
-                                bat 'mvn test -Dtest=CDC.consumer.*'
-                            }
+                        script {
+                            bat 'mvn test -Dtest=CDC.consumer.**.*'
                         }
                     }
                 }
                 stage('Producer') {
                     steps {
-                        dir('project2\\lms-bookss') {
-                            script {
-                                bat 'mvn test -Dtest=CDC.producer.*'
-                            }
+                        script {
+                            bat 'mvn test -Dtest=CDC.producer.**.*'
                         }
                     }
                 }
@@ -165,13 +152,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('project2\\lms-bookss') {
-                    script {
-                        bat 'mvn package'
-                        def imageTag = "v${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-                        echo "Building Docker image with tag: ${imageTag}"
-
-                        bat "docker build -t 1190782/${IMAGE_NAME}:${imageTag} ."
-                    }
+                    bat 'mvn package'
+                    bat 'docker build -t 1190782/lmsbooks:latest .'
                 }
             }
         }
@@ -179,16 +161,11 @@ pipeline {
         stage('Docker Image Push Repository') {
             steps {
                 dir('project2\\lms-bookss') {
-                    script {
-                        def imageTag = "v${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-                        echo "Pushing Docker image with tag: ${imageTag}"
-
                         withCredentials([usernamePassword(credentialsId: '1190782-dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-                            bat "docker push 1190782/${IMAGE_NAME}:${imageTag}"
+                            bat "docker push 1190782/lmsbooks:latest"
                             bat 'docker logout'
                         }
-                    }
                 }
             }
         }
@@ -320,14 +297,8 @@ pipeline {
                             return
                         } else {
                             echo "Deploying to ${env.BRANCH_NAME} environment..."
-
-                            def imageTag = "v${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-
-                            bat """
-                                echo IMAGE_TAG=v${env.BRANCH_NAME}-${env.BUILD_NUMBER} > temp_env_file.env
-                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate --build --env-file temp_env_file.env
-                                del temp_env_file.env
-                            """
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml down --remove-orphans"
+                            bat "docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate"
                         }
                     }
                 }
@@ -346,19 +317,10 @@ pipeline {
                                 returnStdout: true
                             ).trim()
 
-                            echo "Raw output of docker ps command: ${book2Port}"
-
                             book2Port = book2Port.split('->')[0].trim()
-                            echo "book2Port after split: ${book2Port}"
-
                             book2PortNew = book2Port.split('@echo')[1].trim()
-                            echo "book2PortNew after splitting by '@echo': ${book2PortNew}"
-
                             book2PortNew = book2PortNew.split('/')[0].trim()
-                            echo "book2PortNew after splitting by '/': ${book2PortNew}"
-
                             book2PortNew1 = book2PortNew.split(' ')[1].trim()
-                            echo "book2PortNew1 after final split: ${book2PortNew1}"
 
                             bat "mvn verify -Dtest.container.url=http://localhost:${book2PortNew1}"
                         }
@@ -435,13 +397,7 @@ pipeline {
                         if (!success) {
                             echo "Environment ${env.BRANCH_NAME} Failed"
                             currentBuild.result = 'FAILURE'
-                            echo "Rolling back the deployment to the previous version..."
-                            bat """
-                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml down
-                                docker pull 1190782/lmsbooks:v${env.BRANCH_NAME}-${env.BUILD_NUMBER - 1}
-                                docker tag 1190782/lmsbooks:v${env.BRANCH_NAME}-${env.BUILD_NUMBER - 1} 1190782/lmsbooks:latest
-                                docker-compose -f docker-compose-${env.BRANCH_NAME}.yml up -d --force-recreate
-                            """
+                            // HERE we should rollback
                             return
                         } else {
                             echo "Environment ${env.BRANCH_NAME} is Good"

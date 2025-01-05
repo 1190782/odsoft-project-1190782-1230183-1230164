@@ -1,7 +1,7 @@
 
 services:
     lmsbooks_1:
-        image: 1190782/lmsbooks:${IMAGE_TAG}
+        image: 1190782/lmsbooks:latest
         container_name: books1_in_lms_network
         build:
             context: ..
@@ -16,7 +16,7 @@ services:
             - "uploaded_files_volume_1:/tmp"
 
     lmsbooks_2:
-        image: 1190782/lmsbooks:${IMAGE_TAG}
+        image: 1190782/lmsbooks:latest
         container_name: books2_in_lms_network
         build:
             context: ..

@@ -1,8 +1,7 @@
 
 services:
     book1:
-        image: 1190782/lmsbooks:${IMAGE_TAG}
-        #container_name: books1_in_lms_network
+        image: 1190782/lmsbooks:latest
         build:
             context: ..
             dockerfile: Dockerfile
@@ -17,8 +16,7 @@ services:
         deploy:
 
     book2:
-        image: 1190782/lmsbooks:${IMAGE_TAG}
-        #container_name: books2_in_lms_network
+        image: 1190782/lmsbooks:latest
         build:
             context: ..
             dockerfile: Dockerfile
