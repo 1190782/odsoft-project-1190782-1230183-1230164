@@ -280,15 +280,16 @@ pipeline {
                             returnStdout: true
                         ).trim()
 
-                        // Clean up the port to remove "->8080/tcp"
-                        book2Port = book2Port.replaceAll("-.*", "").trim()
+                        // Clean up the extracted port number by removing everything after the first "->" if present
+                        book2Port = book2Port.split('->')[0].trim()
 
                         echo "Book2 is running on port: ${book2Port}"
 
-                        // Fix for using curl properly
+                        // Construct the curl command
                         def curlCommand = "curl -X GET http://localhost:${book2Port}/health"
                         echo "Running curl command: ${curlCommand}"
 
+                        // Run the curl command to check health endpoint
                         bat curlCommand
                     }
                 }
