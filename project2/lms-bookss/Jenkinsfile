@@ -274,25 +274,31 @@ pipeline {
                 script {
                     bat 'docker ps'
 
-                    // Extrair a porta de book1 usando PowerShell embutido no CMD
-                    def book1Port = bat(script: """
-                        for /f "tokens=2 delims=:" %%A in ('docker ps --filter "name=book1" --format "{{.Ports}}" ^| find "8080"') do @echo %%A
-                    """, returnStdout: true).trim()
+                    // Extrair a porta de book1
+                    def book1Port = bat(
+                        script: """
+                            for /f "tokens=2 delims=:" %%A in ('docker ps --filter "name=lms-bookss-book1" --format "{{.Ports}}" ^| findstr "8080"') do @echo %%A
+                        """, 
+                        returnStdout: true
+                    ).trim()
 
-                    // Extrair a porta de book2 usando PowerShell embutido no CMD
-                    def book2Port = bat(script: """
-                        for /f "tokens=2 delims=:" %%A in ('docker ps --filter "name=book2" --format "{{.Ports}}" ^| find "8080"') do @echo %%A
-                    """, returnStdout: true).trim()
+                    // Extrair a porta de book2
+                    def book2Port = bat(
+                        script: """
+                            for /f "tokens=2 delims=:" %%A in ('docker ps --filter "name=lms-bookss-book2" --format "{{.Ports}}" ^| findstr "8080"') do @echo %%A
+                        """, 
+                        returnStdout: true
+                    ).trim()
 
-                    // Limpeza adicional da saída, caso necessário
+                    // Limpeza adicional para garantir que as portas estão corretas
                     book1Port = book1Port.replaceAll("\\s+", "").replaceAll("->.*", "")
                     book2Port = book2Port.replaceAll("\\s+", "").replaceAll("->.*", "")
 
-                    // Log das portas identificadas
+                    // Log das portas encontradas
                     echo "Book1 is running on port: ${book1Port}"
                     echo "Book2 is running on port: ${book2Port}"
 
-                    // Testar as portas usando curl
+                    // Testar as portas encontradas usando curl
                     bat "curl -X GET http://localhost:${book1Port}/health"
                     bat "curl -X GET http://localhost:${book2Port}/health"
                 }
